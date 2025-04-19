@@ -14,16 +14,16 @@ namespace SurvayBasket.Controllers
         private readonly IAccountService accountService = accountService;
 
 
-        [HttpGet("User-Info")]
-        public async Task<ActionResult> UserInfo()
-        {
+        //[HttpGet("User-Info")]
+        //public async Task<ActionResult> UserInfo()
+        //{
 
-            var userInfo = await accountService.GetUserProfileAsync();
+        //    var userInfo = await accountService.GetUserProfileAsync();
 
-            return Ok(userInfo.Value());
+        //    return Ok(userInfo.Value());
 
 
-        }
+        //}
 
 
         [HttpPut("Update-Info")]
