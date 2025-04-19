@@ -26,16 +26,16 @@ namespace SurvayBasket.Controllers
         }
 
 
-        //[HttpPut("Update-Info")]
-        //public async Task<ActionResult> UpdateUserInfo(UserUpdatedProfileRequest request)
-        //{
+        [HttpPut("Update-Info")]
+        public async Task<ActionResult> UpdateUserInfo(UserUpdatedProfileRequest request)
+        {
 
-        //    var userInfo = await accountService.UpdateUserProfileAsync(request);
+            var userInfo = await accountService.UpdateUserProfileAsync(request);
 
-        //    return NoContent();
+            return NoContent();
 
 
-        //}
+        }
 
 
         [HttpPut("change-Password")]
