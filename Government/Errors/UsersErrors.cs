@@ -7,7 +7,7 @@ namespace SurvayBasket.UsreErrors
 
         public static readonly Error IvalidCredential = new("invalid user credential", "invalid user or password");
 
-        public static readonly Error ISVotedBefore = new("User Voted to this Poll before", "User Has No access To this poll because he voted before");
+        public static readonly Error NotFound = new("User Not found", "user id is not correct");
 
         public static readonly Error DublicatedEmail = new("DublicatedEmail", "Email is already exist");
 

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Government.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250309001035_initial")]
-    partial class initial
+    [Migration("20250419230349_seeddata")]
+    partial class seeddata
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -56,6 +56,50 @@ namespace Government.Migrations
                     b.HasIndex("userId");
 
                     b.ToTable("AdminResponses", (string)null);
+                });
+
+            modelBuilder.Entity("Government.Entities.AppRole", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDefault")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("NormalizedName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedName")
+                        .IsUnique()
+                        .HasDatabaseName("RoleNameIndex")
+                        .HasFilter("[NormalizedName] IS NOT NULL");
+
+                    b.ToTable("AspNetRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "01954439-8011-7cca-9a77-c5bf8fae0bae",
+                            ConcurrencyStamp = "01954439-8011-7cca-9a77-c5c08d1d3c39",
+                            IsDefault = false,
+                            IsDeleted = false,
+                            Name = "Admin",
+                            NormalizedName = "ADMIN"
+                        });
                 });
 
             modelBuilder.Entity("Government.Entities.AppUser", b =>
@@ -131,6 +175,26 @@ namespace Government.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "01954439-8011-7cca-9a77-c5c56990be36",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "01954439-8011-7cca-9a77-c5c6e1328a61",
+                            Email = "Admin@GovernmentServices.com",
+                            EmailConfirmed = true,
+                            FirstName = "Government_Services",
+                            LastName = "Admin",
+                            LockoutEnabled = false,
+                            NormalizedEmail = "ADMIN@GOVERNMENTSERVICES.COM",
+                            NormalizedUserName = "ADMIN@GOVERNMENTSERVICES.COM",
+                            PasswordHash = "AQAAAAIAAYagAAAAEMAAAm5j8vUo112zWQjBQETUHX1NZ5gB17emHo8m/sx8WUjlbB45V3idqsevRyihFg==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "01954439-8011-7cca-9a77-c5c75ebac097",
+                            TwoFactorEnabled = false,
+                            UserName = "Admin@GovernmentServices.com"
+                        });
                 });
 
             modelBuilder.Entity("Government.Entities.AttachedDocument", b =>
@@ -1600,6 +1664,11 @@ namespace Government.Migrations
                         .HasMaxLength(250)
                         .HasColumnType("nvarchar(250)");
 
+                    b.Property<string>("category")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ServiceDescription")
@@ -1619,7 +1688,8 @@ namespace Government.Migrations
                             IsAvailable = true,
                             ProcessingTime = "5 أيام عمل",
                             ServiceDescription = "تجديد جواز السفر المصري بسهولة وسرعة.",
-                            ServiceName = "تجديد جواز السفر"
+                            ServiceName = "تجديد جواز السفر",
+                            category = ""
                         },
                         new
                         {
@@ -1629,7 +1699,8 @@ namespace Government.Migrations
                             IsAvailable = true,
                             ProcessingTime = "7 أيام عمل",
                             ServiceDescription = "التقديم للحصول على رخصة قيادة جديدة.",
-                            ServiceName = "إصدار رخصة قيادة"
+                            ServiceName = "إصدار رخصة قيادة",
+                            category = ""
                         },
                         new
                         {
@@ -1639,7 +1710,8 @@ namespace Government.Migrations
                             IsAvailable = true,
                             ProcessingTime = "3 أيام عمل",
                             ServiceDescription = "تسجيل مركبتك لدى إدارة المرور.",
-                            ServiceName = "تسجيل مركبة"
+                            ServiceName = "تسجيل مركبة",
+                            category = ""
                         },
                         new
                         {
@@ -1649,7 +1721,8 @@ namespace Government.Migrations
                             IsAvailable = true,
                             ProcessingTime = "4 أيام عمل",
                             ServiceDescription = "طلب شهادة زواج رسمية من السجل المدني.",
-                            ServiceName = "إصدار شهادة زواج"
+                            ServiceName = "إصدار شهادة زواج",
+                            category = ""
                         },
                         new
                         {
@@ -1659,7 +1732,8 @@ namespace Government.Migrations
                             IsAvailable = true,
                             ProcessingTime = "2 يوم عمل",
                             ServiceDescription = "استخراج شهادة ميلاد رسمية.",
-                            ServiceName = "إصدار شهادة ميلاد"
+                            ServiceName = "إصدار شهادة ميلاد",
+                            category = ""
                         },
                         new
                         {
@@ -1669,7 +1743,8 @@ namespace Government.Migrations
                             IsAvailable = true,
                             ProcessingTime = "6 أيام عمل",
                             ServiceDescription = "طلب إصدار بطاقة رقم قومي جديدة.",
-                            ServiceName = "التقديم لبطاقة الرقم القومي"
+                            ServiceName = "التقديم لبطاقة الرقم القومي",
+                            category = ""
                         },
                         new
                         {
@@ -1679,7 +1754,8 @@ namespace Government.Migrations
                             IsAvailable = true,
                             ProcessingTime = "10 أيام عمل",
                             ServiceDescription = "تسجيل عملك التجاري بشكل قانوني.",
-                            ServiceName = "تسجيل رخصة تجارية"
+                            ServiceName = "تسجيل رخصة تجارية",
+                            category = ""
                         },
                         new
                         {
@@ -1689,7 +1765,8 @@ namespace Government.Migrations
                             IsAvailable = true,
                             ProcessingTime = "8 أيام عمل",
                             ServiceDescription = "التقديم لتصريح عمل للأجانب.",
-                            ServiceName = "إصدار تصريح عمل"
+                            ServiceName = "إصدار تصريح عمل",
+                            category = ""
                         },
                         new
                         {
@@ -1699,7 +1776,8 @@ namespace Government.Migrations
                             IsAvailable = true,
                             ProcessingTime = "7 أيام عمل",
                             ServiceDescription = "تجديد تصريح الإقامة للمقيمين.",
-                            ServiceName = "تجديد تصريح الإقامة"
+                            ServiceName = "تجديد تصريح الإقامة",
+                            category = ""
                         },
                         new
                         {
@@ -1709,7 +1787,8 @@ namespace Government.Migrations
                             IsAvailable = true,
                             ProcessingTime = "5 أيام عمل",
                             ServiceDescription = "التسجيل لأغراض الضرائب.",
-                            ServiceName = "التسجيل الضريبي"
+                            ServiceName = "التسجيل الضريبي",
+                            category = ""
                         },
                         new
                         {
@@ -1719,7 +1798,8 @@ namespace Government.Migrations
                             IsAvailable = true,
                             ProcessingTime = "2 يوم عمل",
                             ServiceDescription = "طلب شهادة وفاة رسمية.",
-                            ServiceName = "استخراج شهادة وفاة"
+                            ServiceName = "استخراج شهادة وفاة",
+                            category = ""
                         },
                         new
                         {
@@ -1729,7 +1809,8 @@ namespace Government.Migrations
                             IsAvailable = true,
                             ProcessingTime = "7 أيام عمل",
                             ServiceDescription = "تجديد السجل التجاري للشركات.",
-                            ServiceName = "تجديد السجل التجاري"
+                            ServiceName = "تجديد السجل التجاري",
+                            category = ""
                         },
                         new
                         {
@@ -1739,7 +1820,8 @@ namespace Government.Migrations
                             IsAvailable = true,
                             ProcessingTime = "3 أيام عمل",
                             ServiceDescription = "استخراج شهادة حسن سير وسلوك.",
-                            ServiceName = "إصدار شهادة حسن سير وسلوك"
+                            ServiceName = "إصدار شهادة حسن سير وسلوك",
+                            category = ""
                         },
                         new
                         {
@@ -1749,7 +1831,8 @@ namespace Government.Migrations
                             IsAvailable = true,
                             ProcessingTime = "10 أيام عمل",
                             ServiceDescription = "تسجيل ملكية عقار في الشهر العقاري.",
-                            ServiceName = "تسجيل عقار"
+                            ServiceName = "تسجيل عقار",
+                            category = ""
                         },
                         new
                         {
@@ -1759,7 +1842,8 @@ namespace Government.Migrations
                             IsAvailable = true,
                             ProcessingTime = "5 أيام عمل",
                             ServiceDescription = "التسجيل للحصول على بطاقة تموين.",
-                            ServiceName = "التقديم للحصول على دعم تمويني"
+                            ServiceName = "التقديم للحصول على دعم تمويني",
+                            category = ""
                         });
                 });
 
@@ -2724,33 +2808,6 @@ namespace Government.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("NormalizedName")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("NormalizedName")
-                        .IsUnique()
-                        .HasDatabaseName("RoleNameIndex")
-                        .HasFilter("[NormalizedName] IS NOT NULL");
-
-                    b.ToTable("AspNetRoles", (string)null);
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.Property<int>("Id")
@@ -2774,6 +2831,120 @@ namespace Government.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetRoleClaims", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            ClaimType = "permissions",
+                            ClaimValue = "Account_Mangment",
+                            RoleId = "01954439-8011-7cca-9a77-c5bf8fae0bae"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            ClaimType = "permissions",
+                            ClaimValue = "admin.create_response",
+                            RoleId = "01954439-8011-7cca-9a77-c5bf8fae0bae"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            ClaimType = "permissions",
+                            ClaimValue = "auth.admin.login",
+                            RoleId = "01954439-8011-7cca-9a77-c5bf8fae0bae"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            ClaimType = "permissions",
+                            ClaimValue = "auth.admin.register",
+                            RoleId = "01954439-8011-7cca-9a77-c5bf8fae0bae"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            ClaimType = "permissions",
+                            ClaimValue = "auth.admin.resend_confirm_email",
+                            RoleId = "01954439-8011-7cca-9a77-c5bf8fae0bae"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            ClaimType = "permissions",
+                            ClaimValue = "services.view_all",
+                            RoleId = "01954439-8011-7cca-9a77-c5bf8fae0bae"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            ClaimType = "permissions",
+                            ClaimValue = "services.create",
+                            RoleId = "01954439-8011-7cca-9a77-c5bf8fae0bae"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            ClaimType = "permissions",
+                            ClaimValue = "services.update",
+                            RoleId = "01954439-8011-7cca-9a77-c5bf8fae0bae"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            ClaimType = "permissions",
+                            ClaimValue = "services.toggle_availability",
+                            RoleId = "01954439-8011-7cca-9a77-c5bf8fae0bae"
+                        },
+                        new
+                        {
+                            Id = 10,
+                            ClaimType = "permissions",
+                            ClaimValue = "users:read",
+                            RoleId = "01954439-8011-7cca-9a77-c5bf8fae0bae"
+                        },
+                        new
+                        {
+                            Id = 11,
+                            ClaimType = "permissions",
+                            ClaimValue = "users:add",
+                            RoleId = "01954439-8011-7cca-9a77-c5bf8fae0bae"
+                        },
+                        new
+                        {
+                            Id = 12,
+                            ClaimType = "permissions",
+                            ClaimValue = "users:update",
+                            RoleId = "01954439-8011-7cca-9a77-c5bf8fae0bae"
+                        },
+                        new
+                        {
+                            Id = 13,
+                            ClaimType = "permissions",
+                            ClaimValue = "roles:read",
+                            RoleId = "01954439-8011-7cca-9a77-c5bf8fae0bae"
+                        },
+                        new
+                        {
+                            Id = 14,
+                            ClaimType = "permissions",
+                            ClaimValue = "roles:add",
+                            RoleId = "01954439-8011-7cca-9a77-c5bf8fae0bae"
+                        },
+                        new
+                        {
+                            Id = 15,
+                            ClaimType = "permissions",
+                            ClaimValue = "roles:update",
+                            RoleId = "01954439-8011-7cca-9a77-c5bf8fae0bae"
+                        },
+                        new
+                        {
+                            Id = 16,
+                            ClaimType = "permissions",
+                            ClaimValue = "results:read",
+                            RoleId = "01954439-8011-7cca-9a77-c5bf8fae0bae"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
@@ -2836,6 +3007,13 @@ namespace Government.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetUserRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = "01954439-8011-7cca-9a77-c5c56990be36",
+                            RoleId = "01954439-8011-7cca-9a77-c5bf8fae0bae"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
@@ -2968,7 +3146,7 @@ namespace Government.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
+                    b.HasOne("Government.Entities.AppRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -2995,7 +3173,7 @@ namespace Government.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
+                    b.HasOne("Government.Entities.AppRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Restrict)

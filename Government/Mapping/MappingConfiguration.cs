@@ -1,6 +1,8 @@
 ﻿using Government.Contracts.Request;
 using Government.Contracts.Services;
 using Mapster;
+using SurvayBasket.Contracts.Authentication;
+using SurvayBasket.Contracts.User.cs;
 
 namespace Government.Mapping
 {
@@ -8,24 +10,23 @@ namespace Government.Mapping
     {
         public void Register(TypeAdapterConfig config)
         {
-            //config.NewConfig<Request, AddRequestResponseDto>()
-            // .Map(dest => dest.RequestID, src => src.Id)
-            //    .Map(dest => dest.ServiceName, src => src.service.ServiceName);
-
-            // config.NewConfig<Request, RequestsDetailstoUser>()
-            //.Map(dest => dest.RequestID, src => src.Id)
-            //   .Map(dest => dest.ServiceName, src => src.service.ServiceName)
-            //   .Map(dest => dest.ResponseText,
-            //                src => src.AdminResponse != null ? src.AdminResponse.ResponseText : "No response yet");
-
-
-
-            // config.NewConfig<Service, ServiceResponse>()
-            //   .Map(dest => dest.ServiceID, src => src.Id);
+      
 
             config.NewConfig<Service, ServiceResponse>()
              .Map(dest => dest.category, src => src.category);
-               
+
+            config.NewConfig<RegisterRequest, AppUser>()
+          .Map(dest => dest.UserName, src => src.Email);
+
+
+            config.NewConfig<UserRequest, AppUser>()
+              .Map(dest => dest.UserName, src => src.Email)
+              .Map(dest => dest.EmailConfirmed, src => true);
+
+            config.NewConfig<UserUpdate, AppUser>()
+             .Map(dest => dest.UserName, src => src.Email)
+             .Map(dest => dest.NormalizedUserName, src => src.Email.ToUpper());
+
 
         }
     }

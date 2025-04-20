@@ -1,6 +1,7 @@
 ﻿using Government.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using SurvayBasket.Abstractions.Consts.cs;
 
 namespace Government.Data.DataBaseConfigurations
 {
@@ -16,6 +17,25 @@ namespace Government.Data.DataBaseConfigurations
             builder.Property(x => x.LastName)
                 .HasMaxLength(100)
                 .IsRequired();
+
+            var Hasher = new PasswordHasher<AppUser>();
+            builder.HasData(new AppUser
+            {
+
+                Id = DefaultUser.AdminId,
+                FirstName = "Government_Services",
+                LastName = "Admin",
+                Email = DefaultUser.AdminEmail,
+                NormalizedEmail = DefaultUser.AdminEmail.ToUpper(),
+                UserName = DefaultUser.AdminEmail,
+                NormalizedUserName = DefaultUser.AdminEmail.ToUpper(),
+                ConcurrencyStamp = DefaultUser.AdminConcurrencyStamp,
+                SecurityStamp = DefaultUser.AdminSecurityStamp,
+                PasswordHash = Hasher.HashPassword(null!, DefaultUser.AdminPassword),
+                EmailConfirmed = true,
+
+
+            });
 
 
 

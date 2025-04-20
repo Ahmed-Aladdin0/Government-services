@@ -5,6 +5,8 @@
        
         public string FirstName { get; set; }= string.Empty;
         public string LastName { get; set; } = string.Empty;
+        public bool IsDeleted { get; set; } = false;
+        
 
 
         public ICollection<AdminResponse> AdminResponses { get; set; } = [];

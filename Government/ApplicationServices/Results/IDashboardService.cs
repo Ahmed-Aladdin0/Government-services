@@ -1,5 +1,6 @@
 ﻿using Government.Contracts.Dashboard;
 using Government.Contracts.DashBoard;
+using Government.Contracts.Services;
 
 namespace Government.ApplicationServices.Results
 {
@@ -9,5 +10,7 @@ namespace Government.ApplicationServices.Results
         Task<Result<Overview>> GetOverviewAsync();
         Task<Result<RequestStatisticsDto>> GetRequestStatisticsAsync();
         Task<Result<ServiceStatisticsDto>> GetServiceStatisticsAsync();
+        Task<Result<IEnumerable<MostRequested>>> GetMostRequestedServicesAsync();
+
     }
 }

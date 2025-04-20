@@ -12,7 +12,7 @@ namespace Government.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    [Authorize(Roles ="Member")]
     public class RequestsController(IRequestService requestService, AppDbContext context, IFieldService fieldService, IWebHostEnvironment environment) : ControllerBase
     {
         private readonly IRequestService _requestService = requestService;
@@ -44,16 +44,16 @@ namespace Government.Controllers
 
         //}
 
-        [HttpGet("{requestId}")]
+        //[HttpGet("{requestId}")]
 
-        public async Task<IActionResult> GetRequest([FromRoute] int requestId, CancellationToken cancellationToken)
-        {
+        //public async Task<IActionResult> GetRequest([FromRoute] int requestId, CancellationToken cancellationToken)
+        //{
 
-            var result = await _requestService.GetUserRequestsDetails(requestId, cancellationToken);
+        //    var result = await _requestService.GetUserRequestsDetails(requestId, cancellationToken);
 
-            return result.IsSuccess ? Ok(result.Value()) : result.ToProblem(statuscode: StatusCodes.Status404NotFound);
+        //    return result.IsSuccess ? Ok(result.Value()) : result.ToProblem(statuscode: StatusCodes.Status404NotFound);
 
-        }
+        //}
 
 
 
@@ -107,17 +107,17 @@ namespace Government.Controllers
         }
 
 
-        [HttpPut("Update/{id}")]
+        //[HttpPut("Update/{id}")]
 
-        public async Task<IActionResult> UpdateService([FromRoute,Range(1,int.MaxValue)]int id, [FromBody]IEnumerable< UpdateRequest> requestDto, CancellationToken cancellationToken)
-        {
+        //public async Task<IActionResult> UpdateService([FromRoute,Range(1,int.MaxValue)]int id, [FromBody]IEnumerable< UpdateRequest> requestDto, CancellationToken cancellationToken)
+        //{
 
-            var result = await _requestService.UpdateRequestAsync(id, requestDto, cancellationToken);
+        //    var result = await _requestService.UpdateRequestAsync(id, requestDto, cancellationToken);
 
-            return (result.IsSuccess)?
-                 NoContent(): result.ToProblem(statuscode: StatusCodes.Status404NotFound);
+        //    return (result.IsSuccess)?
+        //         NoContent(): result.ToProblem(statuscode: StatusCodes.Status404NotFound);
 
-        }
+        //}
 
 
     }

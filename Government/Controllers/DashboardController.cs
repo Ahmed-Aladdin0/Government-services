@@ -1,5 +1,6 @@
 ﻿using Government.ApplicationServices.Results;
 using Government.Contracts.Dashboard;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -36,6 +37,13 @@ namespace Government.Controllers
             return Ok(result);
         }
 
+        [HttpGet("MostRequestedServices")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetMostRequestedServices()
+        {
+            var result = await dashboardService.GetMostRequestedServicesAsync();
+            return Ok(result.Value());
+        }
 
     }
 }

@@ -5,13 +5,13 @@ using System.Security.Claims;
 
 namespace Government.Data
 {
-    public class AppDbContext : IdentityDbContext<AppUser>
+    public class AppDbContext : IdentityDbContext<AppUser,AppRole, string>
     {
-        private readonly IHttpContextAccessor _httpContextAccessor;
+    
 
-        public AppDbContext(DbContextOptions<AppDbContext> options , IHttpContextAccessor httpContextAccessor) : base(options)
+        public AppDbContext(DbContextOptions<AppDbContext> options ) : base(options)
         {
-            _httpContextAccessor = httpContextAccessor;
+            
         }
 
         public DbSet<Service> Services { get; set; }

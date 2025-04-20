@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Government.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250315145749_addCategoryPropInServicesTable")]
-    partial class addCategoryPropInServicesTable
+    [Migration("20250419230144_initial")]
+    partial class initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -56,6 +56,50 @@ namespace Government.Migrations
                     b.HasIndex("userId");
 
                     b.ToTable("AdminResponses", (string)null);
+                });
+
+            modelBuilder.Entity("Government.Entities.AppRole", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDefault")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("NormalizedName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedName")
+                        .IsUnique()
+                        .HasDatabaseName("RoleNameIndex")
+                        .HasFilter("[NormalizedName] IS NOT NULL");
+
+                    b.ToTable("AspNetRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "01954439-8011-7cca-9a77-c5bf8fae0bae",
+                            ConcurrencyStamp = "01954439-8011-7cca-9a77-c5c08d1d3c39",
+                            IsDefault = false,
+                            IsDeleted = false,
+                            Name = "Admin",
+                            NormalizedName = "ADMIN"
+                        });
                 });
 
             modelBuilder.Entity("Government.Entities.AppUser", b =>
@@ -131,6 +175,26 @@ namespace Government.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "01954439-8011-7cca-9a77-c5c56990be36",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "01954439-8011-7cca-9a77-c5c6e1328a61",
+                            Email = "Admin@GovernmentServices.com",
+                            EmailConfirmed = true,
+                            FirstName = "Government_Services",
+                            LastName = "Admin",
+                            LockoutEnabled = false,
+                            NormalizedEmail = "ADMIN@GOVERNMENTSERVICES.COM",
+                            NormalizedUserName = "ADMIN@GOVERNMENTSERVICES.COM",
+                            PasswordHash = "AQAAAAIAAYagAAAAEP+M3uC58jh0jOAcKXvKgA365gL148XNSwYfwMW1t1Gp4VZ1Ro2UjrF+RU/9QbYVOQ==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "01954439-8011-7cca-9a77-c5c75ebac097",
+                            TwoFactorEnabled = false,
+                            UserName = "Admin@GovernmentServices.com"
+                        });
                 });
 
             modelBuilder.Entity("Government.Entities.AttachedDocument", b =>
@@ -1602,7 +1666,8 @@ namespace Government.Migrations
 
                     b.Property<string>("category")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
 
                     b.HasKey("Id");
 
@@ -2743,33 +2808,6 @@ namespace Government.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("NormalizedName")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("NormalizedName")
-                        .IsUnique()
-                        .HasDatabaseName("RoleNameIndex")
-                        .HasFilter("[NormalizedName] IS NOT NULL");
-
-                    b.ToTable("AspNetRoles", (string)null);
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.Property<int>("Id")
@@ -2987,7 +3025,7 @@ namespace Government.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
+                    b.HasOne("Government.Entities.AppRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -3014,7 +3052,7 @@ namespace Government.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
+                    b.HasOne("Government.Entities.AppRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Restrict)

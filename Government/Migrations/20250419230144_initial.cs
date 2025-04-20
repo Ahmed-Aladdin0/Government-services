@@ -18,6 +18,8 @@ namespace Government.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    IsDefault = table.Column<bool>(type: "bit", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true)
@@ -77,6 +79,7 @@ namespace Government.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ServiceName = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
                     ServiceDescription = table.Column<string>(type: "nvarchar(1500)", maxLength: 1500, nullable: false),
+                    category = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
                     IsAvailable = table.Column<bool>(type: "bit", nullable: false),
                     Fee = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
                     ProcessingTime = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
@@ -377,6 +380,16 @@ namespace Government.Migrations
                 });
 
             migrationBuilder.InsertData(
+                table: "AspNetRoles",
+                columns: new[] { "Id", "ConcurrencyStamp", "IsDefault", "IsDeleted", "Name", "NormalizedName" },
+                values: new object[] { "01954439-8011-7cca-9a77-c5bf8fae0bae", "01954439-8011-7cca-9a77-c5c08d1d3c39", false, false, "Admin", "ADMIN" });
+
+            migrationBuilder.InsertData(
+                table: "AspNetUsers",
+                columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "FirstName", "LastName", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
+                values: new object[] { "01954439-8011-7cca-9a77-c5c56990be36", 0, "01954439-8011-7cca-9a77-c5c6e1328a61", "Admin@GovernmentServices.com", true, "Government_Services", "Admin", false, null, "ADMIN@GOVERNMENTSERVICES.COM", "ADMIN@GOVERNMENTSERVICES.COM", "AQAAAAIAAYagAAAAEP+M3uC58jh0jOAcKXvKgA365gL148XNSwYfwMW1t1Gp4VZ1Ro2UjrF+RU/9QbYVOQ==", null, false, "01954439-8011-7cca-9a77-c5c75ebac097", false, "Admin@GovernmentServices.com" });
+
+            migrationBuilder.InsertData(
                 table: "Fields",
                 columns: new[] { "Id", "Description", "FieldName", "HtmlType" },
                 values: new object[,]
@@ -535,24 +548,24 @@ namespace Government.Migrations
 
             migrationBuilder.InsertData(
                 table: "Services",
-                columns: new[] { "Id", "ContactInfo", "Fee", "IsAvailable", "ProcessingTime", "ServiceDescription", "ServiceName" },
+                columns: new[] { "Id", "ContactInfo", "Fee", "IsAvailable", "ProcessingTime", "ServiceDescription", "ServiceName", "category" },
                 values: new object[,]
                 {
-                    { 1, "passports@moe.gov.eg", 1000.00m, true, "5 أيام عمل", "تجديد جواز السفر المصري بسهولة وسرعة.", "تجديد جواز السفر" },
-                    { 2, "traffic@moi.gov.eg", 300.00m, true, "7 أيام عمل", "التقديم للحصول على رخصة قيادة جديدة.", "إصدار رخصة قيادة" },
-                    { 3, "vehicles@moi.gov.eg", 500.00m, true, "3 أيام عمل", "تسجيل مركبتك لدى إدارة المرور.", "تسجيل مركبة" },
-                    { 4, "civil@moj.gov.eg", 150.00m, true, "4 أيام عمل", "طلب شهادة زواج رسمية من السجل المدني.", "إصدار شهادة زواج" },
-                    { 5, "birth@moj.gov.eg", 100.00m, true, "2 يوم عمل", "استخراج شهادة ميلاد رسمية.", "إصدار شهادة ميلاد" },
-                    { 6, "id@moe.gov.eg", 150.00m, true, "6 أيام عمل", "طلب إصدار بطاقة رقم قومي جديدة.", "التقديم لبطاقة الرقم القومي" },
-                    { 7, "commerce@mit.gov.eg", 2000.00m, true, "10 أيام عمل", "تسجيل عملك التجاري بشكل قانوني.", "تسجيل رخصة تجارية" },
-                    { 8, "labor@mol.gov.eg", 1500.00m, true, "8 أيام عمل", "التقديم لتصريح عمل للأجانب.", "إصدار تصريح عمل" },
-                    { 9, "immigration@moe.gov.eg", 1200.00m, true, "7 أيام عمل", "تجديد تصريح الإقامة للمقيمين.", "تجديد تصريح الإقامة" },
-                    { 10, "tax@mof.gov.eg", 400.00m, true, "5 أيام عمل", "التسجيل لأغراض الضرائب.", "التسجيل الضريبي" },
-                    { 11, "death@moj.gov.eg", 100.00m, true, "2 يوم عمل", "طلب شهادة وفاة رسمية.", "استخراج شهادة وفاة" },
-                    { 12, "registry@mit.gov.eg", 1000.00m, true, "7 أيام عمل", "تجديد السجل التجاري للشركات.", "تجديد السجل التجاري" },
-                    { 13, "cert@moi.gov.eg", 200.00m, true, "3 أيام عمل", "استخراج شهادة حسن سير وسلوك.", "إصدار شهادة حسن سير وسلوك" },
-                    { 14, "property@moj.gov.eg", 1500.00m, true, "10 أيام عمل", "تسجيل ملكية عقار في الشهر العقاري.", "تسجيل عقار" },
-                    { 15, "supply@moss.gov.eg", 50.00m, true, "5 أيام عمل", "التسجيل للحصول على بطاقة تموين.", "التقديم للحصول على دعم تمويني" }
+                    { 1, "passports@moe.gov.eg", 1000.00m, true, "5 أيام عمل", "تجديد جواز السفر المصري بسهولة وسرعة.", "تجديد جواز السفر", "" },
+                    { 2, "traffic@moi.gov.eg", 300.00m, true, "7 أيام عمل", "التقديم للحصول على رخصة قيادة جديدة.", "إصدار رخصة قيادة", "" },
+                    { 3, "vehicles@moi.gov.eg", 500.00m, true, "3 أيام عمل", "تسجيل مركبتك لدى إدارة المرور.", "تسجيل مركبة", "" },
+                    { 4, "civil@moj.gov.eg", 150.00m, true, "4 أيام عمل", "طلب شهادة زواج رسمية من السجل المدني.", "إصدار شهادة زواج", "" },
+                    { 5, "birth@moj.gov.eg", 100.00m, true, "2 يوم عمل", "استخراج شهادة ميلاد رسمية.", "إصدار شهادة ميلاد", "" },
+                    { 6, "id@moe.gov.eg", 150.00m, true, "6 أيام عمل", "طلب إصدار بطاقة رقم قومي جديدة.", "التقديم لبطاقة الرقم القومي", "" },
+                    { 7, "commerce@mit.gov.eg", 2000.00m, true, "10 أيام عمل", "تسجيل عملك التجاري بشكل قانوني.", "تسجيل رخصة تجارية", "" },
+                    { 8, "labor@mol.gov.eg", 1500.00m, true, "8 أيام عمل", "التقديم لتصريح عمل للأجانب.", "إصدار تصريح عمل", "" },
+                    { 9, "immigration@moe.gov.eg", 1200.00m, true, "7 أيام عمل", "تجديد تصريح الإقامة للمقيمين.", "تجديد تصريح الإقامة", "" },
+                    { 10, "tax@mof.gov.eg", 400.00m, true, "5 أيام عمل", "التسجيل لأغراض الضرائب.", "التسجيل الضريبي", "" },
+                    { 11, "death@moj.gov.eg", 100.00m, true, "2 يوم عمل", "طلب شهادة وفاة رسمية.", "استخراج شهادة وفاة", "" },
+                    { 12, "registry@mit.gov.eg", 1000.00m, true, "7 أيام عمل", "تجديد السجل التجاري للشركات.", "تجديد السجل التجاري", "" },
+                    { 13, "cert@moi.gov.eg", 200.00m, true, "3 أيام عمل", "استخراج شهادة حسن سير وسلوك.", "إصدار شهادة حسن سير وسلوك", "" },
+                    { 14, "property@moj.gov.eg", 1500.00m, true, "10 أيام عمل", "تسجيل ملكية عقار في الشهر العقاري.", "تسجيل عقار", "" },
+                    { 15, "supply@moss.gov.eg", 50.00m, true, "5 أيام عمل", "التسجيل للحصول على بطاقة تموين.", "التقديم للحصول على دعم تمويني", "" }
                 });
 
             migrationBuilder.InsertData(

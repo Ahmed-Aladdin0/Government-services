@@ -35,13 +35,13 @@ namespace Government.ApplicationServices.GovernmentServices
                 return Result.Success(serviceResponse);
             }
 
-           
+
         }
 
         public async Task<Result<IEnumerable<ServiceResponse>>> GetAllServicesAsync(CancellationToken cancellationToken = default)
         {
             var services = await _context.Services
-                                    .AsNoTracking() 
+                                    .AsNoTracking()
                                     .ToListAsync(cancellationToken);
 
             var serviceResponse = services.Adapt<IEnumerable<ServiceResponse>>();
@@ -71,7 +71,7 @@ namespace Government.ApplicationServices.GovernmentServices
         {
             var isDuplicate = await _context.Services
                                  .AnyAsync(x => (x.ServiceName == request.ServiceName || x.ServiceDescription == request.ServiceDescription), cancellationToken);
-                                       
+
             if (isDuplicate)
                 return Result.Falire<ServiceResponse>(ServiceError.DuplicatingNameOrDescription);
 
@@ -91,7 +91,7 @@ namespace Government.ApplicationServices.GovernmentServices
         public async Task<Result> ToggleServiceAsync(int serviceId, CancellationToken cancellationToken = default)
         {
             var service = await _context.Services
-                                 .SingleOrDefaultAsync(x => x.Id == serviceId,cancellationToken);
+                                 .SingleOrDefaultAsync(x => x.Id == serviceId, cancellationToken);
 
             if (service is null)
                 return Result.Falire(ServiceError.ServiceNotFound);
@@ -104,7 +104,7 @@ namespace Government.ApplicationServices.GovernmentServices
 
         }
 
-        public async Task<Result> UpdateServiceAsync(int serviceId,AddServiceRequest request, CancellationToken cancellationToken = default)
+        public async Task<Result> UpdateServiceAsync(int serviceId, AddServiceRequest request, CancellationToken cancellationToken = default)
         {
             var service = await _context.Services.SingleOrDefaultAsync(x => x.Id == serviceId, cancellationToken); // check service id 
 
@@ -118,7 +118,7 @@ namespace Government.ApplicationServices.GovernmentServices
             if (isDuplicate)
                 return Result.Falire(ServiceError.DuplicatingNameOrDescription);
 
-             request.Adapt(service);
+            request.Adapt(service);
 
             await _context.SaveChangesAsync(cancellationToken);
 
@@ -126,46 +126,7 @@ namespace Government.ApplicationServices.GovernmentServices
 
 
         }
-       
-        public async Task<Result<IEnumerable<MostRequested>>> GetMostRequestedServicesAsync()
-        {
-
-            var mostRequestedServices = await _context.Requests
-                                             .GroupBy(r => r.ServiceId)
-                                             .Select(x => new
-                                             {
-                                                 ServiceId = x.Key,
-                                                 RequestCount = x.Count()
-                                             })
-                                             .OrderByDescending(u => u.RequestCount)
-                                             .Take(5)
-                                             .ToListAsync();
-
-                                                    
-            var serviceIds = mostRequestedServices.Select(x => x.ServiceId).ToList();
 
 
-            //var services = await _context.Services
-            //                   .Where(s => serviceIds.Contains(s.Id))
-            //                   .Select(s => s.ServiceName)
-            //                   .ToListAsync();
-
-            var services = await _context.Services
-                      .Where(s => serviceIds.Contains(s.Id))
-                      .Select(s => new MostRequested(s.ServiceName)) // تحويل مباشرة إلى MostRequested
-                      .ToListAsync();
-
-            // var service = new MostRequested(services);
-
-
-
-            return Result.Success<IEnumerable<MostRequested>>(services);
-
-
-
-
-
-
-        }
     }
 }

@@ -11,7 +11,6 @@ namespace Government.ApplicationServices.GovernmentServices
         Task<Result<ServiceResponse>> AddServiceAsync(AddServiceRequest request ,CancellationToken cancellationToken = default);
         Task<Result> UpdateServiceAsync(int serviceId, AddServiceRequest request ,CancellationToken cancellationToken = default);
         Task<Result> ToggleServiceAsync(int serviceId, CancellationToken cancellationToken = default);
-        Task<Result<IEnumerable<MostRequested>>> GetMostRequestedServicesAsync();
 
 
     }

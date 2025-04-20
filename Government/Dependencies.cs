@@ -5,13 +5,14 @@ using Government.ApplicationServices.Files;
 using Government.ApplicationServices.GovernmentServices;
 using Government.ApplicationServices.RequestServices;
 using Government.ApplicationServices.Results;
+using Government.ApplicationServices.services;
 using Government.Authentication;
 using Government.Errors;
 using Mapster;
 using MapsterMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity.UI.Services;
-
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.IdentityModel.Tokens;
 using SurvayBasket.ApplicationServices.SendingEmail;
 using SurvayBasket.ApplicationServices.UserAccount;
@@ -39,7 +40,7 @@ namespace Government
 
 
             // using identity
-            services.AddIdentity<AppUser, IdentityRole>()
+            services.AddIdentity<AppUser, AppRole>()
             .AddEntityFrameworkStores<AppDbContext>()
             .AddDefaultTokenProviders();
 
@@ -52,6 +53,8 @@ namespace Government
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IDashboardService, DashboardService>();
             services.AddScoped<IFileService, FileService>();
+            services.AddScoped<IRoleService, RoleService>();
+            services.AddScoped<IUserService, UserService>();
 
             // Exception Handler
             services.AddExceptionHandler<GlobalExceptionHandler>()
@@ -87,7 +90,7 @@ namespace Government
             var connectionstring = configuration.GetConnectionString("GovernmentConnection") ??
                 throw new InvalidOperationException("Connection String 'GovernmentConnection' Not Found !!");
 
-            services.AddDbContext<AppDbContext>(option => option.UseSqlServer(connectionstring));
+            services.AddDbContext<AppDbContext>(option => option.UseSqlServer(connectionstring).ConfigureWarnings(warnings => warnings.Ignore(RelationalEventId.PendingModelChangesWarning)));
 
 
 

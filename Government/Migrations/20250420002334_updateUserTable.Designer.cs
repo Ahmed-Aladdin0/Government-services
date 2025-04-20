@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Government.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250315145944_addCategoryPropInServicesTable1")]
-    partial class addCategoryPropInServicesTable1
+    [Migration("20250420002334_updateUserTable")]
+    partial class updateUserTable
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -58,6 +58,50 @@ namespace Government.Migrations
                     b.ToTable("AdminResponses", (string)null);
                 });
 
+            modelBuilder.Entity("Government.Entities.AppRole", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDefault")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("NormalizedName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedName")
+                        .IsUnique()
+                        .HasDatabaseName("RoleNameIndex")
+                        .HasFilter("[NormalizedName] IS NOT NULL");
+
+                    b.ToTable("AspNetRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "01954439-8011-7cca-9a77-c5bf8fae0bae",
+                            ConcurrencyStamp = "01954439-8011-7cca-9a77-c5c08d1d3c39",
+                            IsDefault = false,
+                            IsDeleted = false,
+                            Name = "Admin",
+                            NormalizedName = "ADMIN"
+                        });
+                });
+
             modelBuilder.Entity("Government.Entities.AppUser", b =>
                 {
                     b.Property<string>("Id")
@@ -81,6 +125,9 @@ namespace Government.Migrations
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
 
                     b.Property<string>("LastName")
                         .IsRequired()
@@ -131,6 +178,27 @@ namespace Government.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "01954439-8011-7cca-9a77-c5c56990be36",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "01954439-8011-7cca-9a77-c5c6e1328a61",
+                            Email = "Admin@GovernmentServices.com",
+                            EmailConfirmed = true,
+                            FirstName = "Government_Services",
+                            IsDeleted = false,
+                            LastName = "Admin",
+                            LockoutEnabled = false,
+                            NormalizedEmail = "ADMIN@GOVERNMENTSERVICES.COM",
+                            NormalizedUserName = "ADMIN@GOVERNMENTSERVICES.COM",
+                            PasswordHash = "AQAAAAIAAYagAAAAEM+n3jCYYJBC0myHsoyV/PORYghabi/FMTd+XL6qG6yKe7Ec8zNVkv6IIfJpZ5TEVw==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "01954439-8011-7cca-9a77-c5c75ebac097",
+                            TwoFactorEnabled = false,
+                            UserName = "Admin@GovernmentServices.com"
+                        });
                 });
 
             modelBuilder.Entity("Government.Entities.AttachedDocument", b =>
@@ -2744,33 +2812,6 @@ namespace Government.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("NormalizedName")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("NormalizedName")
-                        .IsUnique()
-                        .HasDatabaseName("RoleNameIndex")
-                        .HasFilter("[NormalizedName] IS NOT NULL");
-
-                    b.ToTable("AspNetRoles", (string)null);
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.Property<int>("Id")
@@ -2794,6 +2835,120 @@ namespace Government.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetRoleClaims", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            ClaimType = "permissions",
+                            ClaimValue = "Account_Mangment",
+                            RoleId = "01954439-8011-7cca-9a77-c5bf8fae0bae"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            ClaimType = "permissions",
+                            ClaimValue = "admin.create_response",
+                            RoleId = "01954439-8011-7cca-9a77-c5bf8fae0bae"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            ClaimType = "permissions",
+                            ClaimValue = "auth.admin.login",
+                            RoleId = "01954439-8011-7cca-9a77-c5bf8fae0bae"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            ClaimType = "permissions",
+                            ClaimValue = "auth.admin.register",
+                            RoleId = "01954439-8011-7cca-9a77-c5bf8fae0bae"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            ClaimType = "permissions",
+                            ClaimValue = "auth.admin.resend_confirm_email",
+                            RoleId = "01954439-8011-7cca-9a77-c5bf8fae0bae"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            ClaimType = "permissions",
+                            ClaimValue = "services.view_all",
+                            RoleId = "01954439-8011-7cca-9a77-c5bf8fae0bae"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            ClaimType = "permissions",
+                            ClaimValue = "services.create",
+                            RoleId = "01954439-8011-7cca-9a77-c5bf8fae0bae"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            ClaimType = "permissions",
+                            ClaimValue = "services.update",
+                            RoleId = "01954439-8011-7cca-9a77-c5bf8fae0bae"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            ClaimType = "permissions",
+                            ClaimValue = "services.toggle_availability",
+                            RoleId = "01954439-8011-7cca-9a77-c5bf8fae0bae"
+                        },
+                        new
+                        {
+                            Id = 10,
+                            ClaimType = "permissions",
+                            ClaimValue = "users:read",
+                            RoleId = "01954439-8011-7cca-9a77-c5bf8fae0bae"
+                        },
+                        new
+                        {
+                            Id = 11,
+                            ClaimType = "permissions",
+                            ClaimValue = "users:add",
+                            RoleId = "01954439-8011-7cca-9a77-c5bf8fae0bae"
+                        },
+                        new
+                        {
+                            Id = 12,
+                            ClaimType = "permissions",
+                            ClaimValue = "users:update",
+                            RoleId = "01954439-8011-7cca-9a77-c5bf8fae0bae"
+                        },
+                        new
+                        {
+                            Id = 13,
+                            ClaimType = "permissions",
+                            ClaimValue = "roles:read",
+                            RoleId = "01954439-8011-7cca-9a77-c5bf8fae0bae"
+                        },
+                        new
+                        {
+                            Id = 14,
+                            ClaimType = "permissions",
+                            ClaimValue = "roles:add",
+                            RoleId = "01954439-8011-7cca-9a77-c5bf8fae0bae"
+                        },
+                        new
+                        {
+                            Id = 15,
+                            ClaimType = "permissions",
+                            ClaimValue = "roles:update",
+                            RoleId = "01954439-8011-7cca-9a77-c5bf8fae0bae"
+                        },
+                        new
+                        {
+                            Id = 16,
+                            ClaimType = "permissions",
+                            ClaimValue = "results:read",
+                            RoleId = "01954439-8011-7cca-9a77-c5bf8fae0bae"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
@@ -2856,6 +3011,13 @@ namespace Government.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetUserRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = "01954439-8011-7cca-9a77-c5c56990be36",
+                            RoleId = "01954439-8011-7cca-9a77-c5bf8fae0bae"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
@@ -2988,7 +3150,7 @@ namespace Government.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
+                    b.HasOne("Government.Entities.AppRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -3015,7 +3177,7 @@ namespace Government.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
+                    b.HasOne("Government.Entities.AppRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Restrict)
