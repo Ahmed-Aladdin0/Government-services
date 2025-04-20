@@ -74,10 +74,10 @@ namespace SurvayBasket.Controllers
         [HttpPut("{id}/Toggle_Status")]
         public async Task<ActionResult> Toggle([FromRoute] string id, CancellationToken cancellationToken)
         {
-            var result = await roleService.ToggleAsync(id,cancellationToken);
+            var result = await roleService.ToggleAsync(id, cancellationToken);
 
             return (result.IsSuccess)
-                  ?    NoContent()
+                  ? NoContent()
                   : result.ToProblem(statuscode: StatusCodes.Status404NotFound);
 
         }
