@@ -38,27 +38,27 @@ namespace Government.ApplicationServices.Fields
         }
 
 
-        public async Task<Result<IEnumerable<DocumentsResponse>>> GetDocumentsAsync(int serviceId, CancellationToken cancellationToken)
-        {
-            var service = await context.Services.SingleOrDefaultAsync(x => x.Id == serviceId, cancellationToken); // check service id 
+        //public async Task<Result<IEnumerable<DocumentsResponse>>> GetDocumentsAsync(int serviceId, CancellationToken cancellationToken)
+        //{
+        //    var service = await context.Services.SingleOrDefaultAsync(x => x.Id == serviceId, cancellationToken); // check service id 
 
-            if (service is null)
-                return Result.Falire<IEnumerable<DocumentsResponse>>(ServiceError.ServiceNotFound);
+        //    if (service is null)
+        //        return Result.Falire<IEnumerable<DocumentsResponse>>(ServiceError.ServiceNotFound);
 
-            var Documents = await context.RequiredDocuments
-                             .Where(x => x.ServiceId == serviceId)
-                             .Select(x => new DocumentsResponse(
-                                x.Id,
-                                x.FileName,
-                                x.Description,
-                                x.DocumentType,
-                                x.IsMandatory
-                                 ))
-                             .AsNoTracking()
-                             .ToListAsync(cancellationToken);
+        //    var Documents = await context.RequiredDocuments
+        //                     .Where(x => x.ServiceId == serviceId)
+        //                     .Select(x => new DocumentsResponse(
+        //                        x.Id,
+        //                        x.FileName,
+        //                        x.Description,
+        //                        x.DocumentType,
+        //                        x.IsMandatory
+        //                         ))
+        //                     .AsNoTracking()
+        //                     .ToListAsync(cancellationToken);
 
-            return Result.Success<IEnumerable<DocumentsResponse>>(Documents);
+        //    return Result.Success<IEnumerable<DocumentsResponse>>(Documents);
 
-        }
+        //}
     }
 }

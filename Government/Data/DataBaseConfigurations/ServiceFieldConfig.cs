@@ -9,6 +9,7 @@ namespace Government.Data.DataBaseConfigurations
 
         public void Configure(EntityTypeBuilder<ServiceField> builder)
         {
+            /*
             builder.HasData([
      // 🔹 تجديد جواز السفر (ServiceId = 1)
      new() { Id = 1, ServiceId = 1, FieldId = 1 },   // رقم جواز السفر الحالي
@@ -189,7 +190,7 @@ namespace Government.Data.DataBaseConfigurations
     new() { Id = 148, ServiceId = 15, FieldId = 148 }, // الحالة الاجتماعية
     new() { Id = 149, ServiceId = 15, FieldId = 149 }, // عنوان السكن
     new() { Id = 150, ServiceId = 15, FieldId = 150 }  // رقم الحساب البنكي
- ]);
+ ]);*/
             builder.ToTable("ServiceFields");
 
         }

@@ -1,4 +1,4 @@
-﻿using Government.ApplicationServices.Files;
+﻿using Government.ApplicationServices.UploadFiles;
 using Government.Contracts.Fields;
 using Government.Contracts.Request;
 using Government.Contracts.Request.Submiting;
@@ -11,14 +11,13 @@ using System.Security.Claims;
 namespace Government.ApplicationServices.RequestServices
 {
     public class RequestService(AppDbContext context, IHttpContextAccessor httpContextAccessor,
-        IWebHostEnvironment env, ILogger<RequestService> logger,
-        IFileService fileService) : IRequestService
+         ILogger<RequestService> logger, IAttachedFileServcie attachedFileServcie
+       ) : IRequestService
     {
         private readonly AppDbContext _context = context;
         private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
-        private readonly IWebHostEnvironment env = env;
         private readonly ILogger<RequestService> logger = logger;
-        private readonly IFileService fileService = fileService;
+        private readonly IAttachedFileServcie attachedFileServcie = attachedFileServcie;
 
 
 
@@ -111,11 +110,10 @@ namespace Government.ApplicationServices.RequestServices
             return Result.Success<IEnumerable<RequestsDetailstoUser>>(requests);
 
         }
-
+       
         public async Task<Result<SubmitResponseDto>> SubmitRequestAsync(SubmitRequestDto requestDto, CancellationToken cancellationToken)
         {
             var userId = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
-
 
             using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
             try
@@ -125,12 +123,11 @@ namespace Government.ApplicationServices.RequestServices
                     RequestDate = DateTime.UtcNow,
                     UserId = userId!,
                     ServiceId = requestDto.ServiceId,
-                    AttachedDocuments = new List<AttachedDocument>(),
-                    serviceData = new List<ServiceData>()
+                    
                 };
-
                 await _context.Requests.AddAsync(request, cancellationToken);
                 await _context.SaveChangesAsync(cancellationToken);
+
 
 
                 var serviceDataList = requestDto.ServiceData.Select(sd => new ServiceData
@@ -142,36 +139,13 @@ namespace Government.ApplicationServices.RequestServices
                     FieldValueFloat = sd.FieldValueFloat,
                     FieldValueDate = sd.FieldValueDate
                 }).ToList();
-
-
                 await _context.ServicesData.AddRangeAsync(serviceDataList, cancellationToken);
-
                 await _context.SaveChangesAsync(cancellationToken);
 
 
-                if (requestDto.Files != null && requestDto.Files.Any())
-                {
-
-                    var attachedDocuments = new List<AttachedDocument>();
-                    foreach (var file in requestDto.Files)
-                    {
-                        var filePath = await fileService.UploadFile(file);
-                        attachedDocuments.Add(new AttachedDocument
-                        {
-                            RequestId = request.Id,
-                            FileName = file.FileName,
-                            FileUrl = filePath,
-                            UploadedAt = DateTime.UtcNow,
-                            IsVerified = false
-                        });
-                    }
-
-                    await _context.AttachedDocuments.AddRangeAsync(attachedDocuments, cancellationToken);
-                }
-
-                await _context.SaveChangesAsync(cancellationToken);
+                await attachedFileServcie.UploadManyAttachedAsync(requestDto.Files,request.Id ,cancellationToken);
+  
                 await transaction.CommitAsync(cancellationToken);
-
                 return Result.Success(new SubmitResponseDto(request.Id));
             }
             catch (Exception ex)
@@ -182,7 +156,7 @@ namespace Government.ApplicationServices.RequestServices
                 return Result.Falire<SubmitResponseDto>(RequestErrors.RequestNotCompleted);
             }
         }
-
+       
         public async Task<Result<IEnumerable<UpdateFields>>> GetUserRequestsDetails(int RequestId, CancellationToken cancellationToken)
         {
 

@@ -1,8 +1,8 @@
-﻿namespace Government.ApplicationServices.Files
-{
-    public interface IFileService
-    {
+﻿//namespace Government.ApplicationServices.Files
+//{
+//    public interface IFileService
+//    {
 
-        Task<string> UploadFile(IFormFile file);
-    }
-}
+//        Task<string> UploadFile(IFormFile file);
+//    }
+//}

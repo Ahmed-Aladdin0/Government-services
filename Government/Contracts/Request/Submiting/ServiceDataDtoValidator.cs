@@ -9,9 +9,8 @@ namespace Government.Contracts.Request.Submiting
         public ServiceDataDtoValidator()
         {
             RuleFor(x => x.FieldId)
-               .GreaterThan(0).WithMessage("معرف الحقل يجب أن يكون أكبر من 0");
+               .GreaterThan(0);
 
-            // التحقق من أن واحد على الأقل من القيم موجود
             RuleFor(x => x)
                 .Must(x => x.FieldValueString != null || x.FieldValueInt.HasValue ||
                           x.FieldValueFloat.HasValue || x.FieldValueDate.HasValue)

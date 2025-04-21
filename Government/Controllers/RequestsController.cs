@@ -12,7 +12,7 @@ namespace Government.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles ="Member")]
+   // [Authorize(Roles ="Member")]
     public class RequestsController(IRequestService requestService, AppDbContext context, IFieldService fieldService, IWebHostEnvironment environment) : ControllerBase
     {
         private readonly IRequestService _requestService = requestService;
@@ -81,23 +81,23 @@ namespace Government.Controllers
                       : result.ToProblem(statuscode: StatusCodes.Status404NotFound);
         }
 
-        [HttpGet]
-        [Route("{serviceId}/documents")]
-        [AllowAnonymous]
+        //[HttpGet]
+        //[Route("{serviceId}/documents")]
+        //[AllowAnonymous]
 
-        public async Task<IActionResult> GetDocuments([FromRoute] int serviceId, CancellationToken cancellationToken)
-        {
+        //public async Task<IActionResult> GetDocuments([FromRoute] int serviceId, CancellationToken cancellationToken)
+        //{
 
-            var result = await fieldService.GetDocumentsAsync(serviceId, cancellationToken);
+        //    var result = await fieldService.GetDocumentsAsync(serviceId, cancellationToken);
 
-            return result.IsSuccess ?
-                        Ok(result.Value())
-                      : result.ToProblem(statuscode: StatusCodes.Status404NotFound);
-        }
+        //    return result.IsSuccess ?
+        //                Ok(result.Value())
+        //              : result.ToProblem(statuscode: StatusCodes.Status404NotFound);
+        //}
 
 
         [HttpPost("submit")]
-        
+       
         public async Task<IActionResult> SubmitServiceRequest([FromForm] SubmitRequestDto requestDto, CancellationToken cancellationToken)
         {
             var result = await _requestService.SubmitRequestAsync(requestDto, cancellationToken);

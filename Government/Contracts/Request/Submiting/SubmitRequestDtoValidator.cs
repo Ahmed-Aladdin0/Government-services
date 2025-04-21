@@ -8,10 +8,10 @@ namespace Government.Contracts.Request.Submiting
         {
 
             RuleFor(x => x.ServiceId)
-                .GreaterThan(0).WithMessage("معرف الخدمة يجب أن يكون أكبر من 0");
+                .GreaterThan(0);
 
             RuleFor(x => x.Files)
-                .NotNull().WithMessage("يجب إرفاق ملف واحد على الأقل")
+                .NotNull()
                  .Must(files => files != null && files.Any()).WithMessage("يجب إرفاق ملف واحد على الأقل")
 
                 .ForEach(file => file
@@ -23,9 +23,6 @@ namespace Government.Contracts.Request.Submiting
             RuleFor(x => x.ServiceData)
                 .NotNull().WithMessage("حقول الخدمة مطلوبة")
                 .Must(fields => fields != null && fields.Any()).WithMessage("يجب إدخال حقل خدمة واحد على الأقل");
-
-
-
 
             RuleForEach(x => x.ServiceData)
                 .SetValidator(new ServiceDataDtoValidator());

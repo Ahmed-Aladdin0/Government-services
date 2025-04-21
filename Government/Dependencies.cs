@@ -1,11 +1,12 @@
 ﻿using FluentValidation;
 using FluentValidation.AspNetCore;
 using Government.ApplicationServices.AdminServices;
-using Government.ApplicationServices.Files;
+
 using Government.ApplicationServices.GovernmentServices;
 using Government.ApplicationServices.RequestServices;
 using Government.ApplicationServices.Results;
 using Government.ApplicationServices.services;
+using Government.ApplicationServices.UploadFiles;
 using Government.Authentication;
 using Government.Errors;
 using Mapster;
@@ -52,9 +53,11 @@ namespace Government
             services.AddScoped<IEmailSender, EmailService>();
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IDashboardService, DashboardService>();
-            services.AddScoped<IFileService, FileService>();
+          //  services.AddScoped<IFileService, FileService>();
             services.AddScoped<IRoleService, RoleService>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IRequiredFileServcie, RequiredFileServcie>();
+            services.AddScoped<IAttachedFileServcie, AttachedFileServcie>();
 
             // Exception Handler
             services.AddExceptionHandler<GlobalExceptionHandler>()

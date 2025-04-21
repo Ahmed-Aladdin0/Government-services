@@ -49,6 +49,7 @@ namespace Government.Data.DataBaseConfigurations
              .WithMany(x => x.Services)
              .UsingEntity<ServiceField >();
 
+            /*
             builder.HasData
              ([
 
@@ -69,6 +70,7 @@ namespace Government.Data.DataBaseConfigurations
                 new Service { Id = 15, ServiceName = "التقديم للحصول على دعم تمويني", ServiceDescription = "التسجيل للحصول على بطاقة تموين.", IsAvailable = true, Fee = 50.00m, ProcessingTime = "5 أيام عمل", ContactInfo = "supply@moss.gov.eg" }
 
              ]);
+            */
 
             builder.ToTable("Services");
 

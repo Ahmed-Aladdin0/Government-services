@@ -57,8 +57,8 @@ namespace Government.Controllers
 
 
         [HttpPost("Add")]
-
-        public async Task<IActionResult> AddService([FromBody] AddServiceRequest request, CancellationToken cancellationToken)
+        [AllowAnonymous]
+        public async Task<IActionResult> AddService([FromForm] ServiceRequest request, CancellationToken cancellationToken)
         {
 
             var result = await _service.AddServiceAsync(request, cancellationToken);
@@ -90,7 +90,7 @@ namespace Government.Controllers
 
         [HttpPut("Update/{id}")]
 
-        public async Task<IActionResult> UpdateService([FromRoute] int id, [FromBody] AddServiceRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> UpdateService([FromRoute] int id, [FromBody] ServiceRequest request, CancellationToken cancellationToken)
         {
 
             var result = await _service.UpdateServiceAsync(id, request, cancellationToken);

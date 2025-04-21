@@ -33,7 +33,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\.well-known\pki-validation\" />
+    <Folder Include="wwwroot\uploads\AttachedFiles\" />
+    <Folder Include="wwwroot\uploads\RequiredFiles\" />
   </ItemGroup>
 
 </Project>

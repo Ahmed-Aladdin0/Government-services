@@ -7,6 +7,6 @@ namespace Government.ApplicationServices.Fields
     {
 
         Task<Result <IEnumerable<FieldsResponse>>> GetFieldAsync(int serviceId , CancellationToken cancellationToken);
-        Task<Result <IEnumerable<DocumentsResponse>>> GetDocumentsAsync(int serviceId , CancellationToken cancellationToken);
+        //Task<Result <IEnumerable<DocumentsResponse>>> GetDocumentsAsync(int serviceId , CancellationToken cancellationToken);
     }
 }

@@ -8,8 +8,8 @@ namespace Government.ApplicationServices.GovernmentServices
         Task<Result<IEnumerable<ServiceResponse>>> GetAllServicesAsync(CancellationToken cancellationToken = default);
         Task<Result<IEnumerable<ServiceResponse>>> GetAllAvailableServicesAsync(string serviceCategory,CancellationToken cancellationToken = default);
         Task<Result<ServiceResponse>> GetServicesByIdAsync(int serviceId ,CancellationToken cancellationToken = default);
-        Task<Result<ServiceResponse>> AddServiceAsync(AddServiceRequest request ,CancellationToken cancellationToken = default);
-        Task<Result> UpdateServiceAsync(int serviceId, AddServiceRequest request ,CancellationToken cancellationToken = default);
+        Task<Result<ServiceResponse>> AddServiceAsync(ServiceRequest request ,CancellationToken cancellationToken = default);
+        Task<Result> UpdateServiceAsync(int serviceId, ServiceRequest request ,CancellationToken cancellationToken = default);
         Task<Result> ToggleServiceAsync(int serviceId, CancellationToken cancellationToken = default);
 
 

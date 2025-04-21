@@ -2,9 +2,9 @@
 {
     public record SubmitRequestDto(
 
-       [FromForm] int ServiceId,
-       [FromForm] IFormFile[] Files,  
-       [FromForm] List<ServiceDataDto> ServiceData
+        int ServiceId,
+        List<IFormFile> Files,  
+        List<ServiceDataDto> ServiceData
 
  );
 }

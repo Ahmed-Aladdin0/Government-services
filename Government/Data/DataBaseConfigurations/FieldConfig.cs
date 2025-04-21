@@ -26,8 +26,8 @@ namespace Government.Data.DataBaseConfigurations
              .WithOne(x => x.Field)
              .HasForeignKey(x => x.FieldId);
 
-            builder.HasData([
-                   
+            //builder.HasData([
+      /*             
     // 🔹 Fields for تجديد جواز السفر (ServiceId = 1)
     new() { Id = 1, FieldName = "رقم جواز السفر الحالي", Description = "أدخل رقم جواز السفر الحالي.", HtmlType = "text" },
     new() { Id = 2, FieldName = "رقم جواز السفر السابق", Description = "أدخل رقم جواز السفر السابق (إن وجد).", HtmlType = "text" },
@@ -207,7 +207,7 @@ namespace Government.Data.DataBaseConfigurations
     new() { Id = 148, FieldName = "الحالة الاجتماعية", Description = "أدخل حالتك الاجتماعية.", HtmlType = "text" },
     new() { Id = 149, FieldName = "عنوان السكن", Description = "أدخل عنوان السكن الحالي.", HtmlType = "text" },
     new() { Id = 150, FieldName = "رقم الحساب البنكي", Description = "أدخل رقم الحساب البنكي (إن وجد).", HtmlType = "text" }
-]);
+]);*/
 
             builder.ToTable("Fields");
 

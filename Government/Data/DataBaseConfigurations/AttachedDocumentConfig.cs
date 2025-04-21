@@ -10,20 +10,11 @@ namespace Government.Data.DataBaseConfigurations
         public void Configure(EntityTypeBuilder<AttachedDocument> builder)
         {
 
-            builder.Property(x => x.FileName)
-               .HasMaxLength(150)
-               .IsRequired();
+            builder.Property(x => x.FileName).HasMaxLength(250);
+            builder.Property(x => x.ContentType).HasMaxLength(50);
+            builder.Property(x => x.FileExtension).HasMaxLength(10);
 
-            builder.Property(x => x.FileUrl)
-          .HasMaxLength(5000)
-          .IsRequired();
-
-
-            builder.Property(x => x.DocumentType)
-              .HasMaxLength(5000)
-              .IsRequired();
-
-        builder.ToTable("AttachedDocuments");
+            builder.ToTable("AttachedDocuments");
 
         }
     }
