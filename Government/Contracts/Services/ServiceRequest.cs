@@ -8,7 +8,7 @@
         string ProcessingTime,
         string ContactInfo,
         List<IFormFile> Files,
-        IEnumerable<ServiceFields> ServiceFields
+        List<ServiceFields> ServiceFields
 
     );
 }

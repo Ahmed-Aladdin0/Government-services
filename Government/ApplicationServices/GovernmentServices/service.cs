@@ -74,67 +74,79 @@ namespace Government.ApplicationServices.GovernmentServices
         public async Task<Result<ServiceResponse>> AddServiceAsync(ServiceRequest request, CancellationToken cancellationToken = default)
         {
             var isDuplicate = await _context.Services
-                                 .AnyAsync(x => (x.ServiceName == request.ServiceName || x.ServiceDescription == request.ServiceDescription), cancellationToken);
+                .AnyAsync(x => x.ServiceName == request.ServiceName || x.ServiceDescription == request.ServiceDescription, cancellationToken);
 
             if (isDuplicate)
                 return Result.Falire<ServiceResponse>(ServiceError.DuplicatingNameOrDescription);
 
-
             using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
             try
             {
-
                 var newService = new Service
-            {
-                ServiceName = request.ServiceName,
-                ServiceDescription = request.ServiceDescription,
-                Fee = request.Fee,
-                ProcessingTime = request.ProcessingTime,
-                ContactInfo = request.ContactInfo,
-            };
-            await _context.Services.AddAsync(newService);
-            await _context.SaveChangesAsync(cancellationToken);
+                {
+                    ServiceName = request.ServiceName,
+                    ServiceDescription = request.ServiceDescription,
+                    Fee = request.Fee,
+                    ProcessingTime = request.ProcessingTime,
+                    ContactInfo = request.ContactInfo,
+                };
+                await _context.Services.AddAsync(newService, cancellationToken);
+                await _context.SaveChangesAsync(cancellationToken);
 
+                var serviceFields = new List<ServiceField>();
 
+                foreach (var fieldRequest in request.ServiceFields)
+                {
+                    
+                    var existingField = await _context.Fields
+                        .FirstOrDefaultAsync(f => f.FieldName == fieldRequest.FieldName, cancellationToken);
 
-            var Fields =  request.ServiceFields.Select(x => new Field
-            {
-                FieldName= x.FieldName,
-                Description= x.Description,
-                HtmlType= x.HtmlType,
-            }).ToList();
-            await _context.Fields.AddRangeAsync(Fields);
-            await _context.SaveChangesAsync(cancellationToken);
+                    Field fieldEntity;
 
+                    if (existingField is not null)
+                    {
+                        fieldEntity = existingField;
+                    }
+                    else
+                    {
+                        fieldEntity = new Field
+                        {
+                            FieldName = fieldRequest.FieldName,
+                            Description = fieldRequest.Description,
+                            HtmlType = fieldRequest.HtmlType
+                        };
 
+                        await _context.Fields.AddAsync(fieldEntity, cancellationToken);
+                        await _context.SaveChangesAsync(cancellationToken); // To get the Id
+                    }
 
-            var serviceFields = Fields.Select(x => new ServiceField
-            {
-                ServiceId= newService.Id,
-                FieldId = x.Id
-            }).ToList();
-            await _context.ServicesField.AddRangeAsync(serviceFields);
-            await _context.SaveChangesAsync(cancellationToken);
+                    serviceFields.Add(new ServiceField
+                    {
+                        ServiceId = newService.Id,
+                        FieldId = fieldEntity.Id
+                    });
+                }
 
+                await _context.ServicesField.AddRangeAsync(serviceFields, cancellationToken);
+                await _context.SaveChangesAsync(cancellationToken);
 
+                await _fileServcie.UploadManyAsync(request.Files, newService.Id);
+                await _context.SaveChangesAsync(cancellationToken);
 
-            await  _fileServcie.UploadManyAsync(request.Files, newService.Id);
-            await _context.SaveChangesAsync(cancellationToken);
+                await transaction.CommitAsync(cancellationToken);
 
-            await transaction.CommitAsync(cancellationToken);
-            var ServiceResponse = newService.Adapt<ServiceResponse>();
-            return Result.Success(ServiceResponse);
+                var serviceResponse = newService.Adapt<ServiceResponse>();
+                return Result.Success(serviceResponse);
             }
-
             catch (Exception ex)
             {
                 await transaction.RollbackAsync(cancellationToken);
-                logger.LogError(ex, "Error Within Adding New Service ");
+                logger.LogError(ex, "Error Within Adding New Service");
 
                 return Result.Falire<ServiceResponse>(RequestErrors.RequestNotCompleted);
             }
-
         }
+
 
         public async Task<Result> ToggleServiceAsync(int serviceId, CancellationToken cancellationToken = default)
         {

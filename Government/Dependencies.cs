@@ -9,6 +9,7 @@ using Government.ApplicationServices.services;
 using Government.ApplicationServices.UploadFiles;
 using Government.Authentication;
 using Government.Errors;
+using Government.Test.Serv;
 using Mapster;
 using MapsterMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -58,6 +59,8 @@ namespace Government
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IRequiredFileServcie, RequiredFileServcie>();
             services.AddScoped<IAttachedFileServcie, AttachedFileServcie>();
+            services.AddScoped<ITest,TestServ>();
+
 
             // Exception Handler
             services.AddExceptionHandler<GlobalExceptionHandler>()

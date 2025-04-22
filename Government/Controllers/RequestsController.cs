@@ -109,13 +109,13 @@ namespace Government.Controllers
 
         //[HttpPut("Update/{id}")]
 
-        //public async Task<IActionResult> UpdateService([FromRoute,Range(1,int.MaxValue)]int id, [FromBody]IEnumerable< UpdateRequest> requestDto, CancellationToken cancellationToken)
+        //public async Task<IActionResult> UpdateService([FromRoute, Range(1, int.MaxValue)] int id, [FromBody] IEnumerable<UpdateRequest> requestDto, CancellationToken cancellationToken)
         //{
 
         //    var result = await _requestService.UpdateRequestAsync(id, requestDto, cancellationToken);
 
-        //    return (result.IsSuccess)?
-        //         NoContent(): result.ToProblem(statuscode: StatusCodes.Status404NotFound);
+        //    return (result.IsSuccess) ?
+        //         NoContent() : result.ToProblem(statuscode: StatusCodes.Status404NotFound);
 
         //}
 
