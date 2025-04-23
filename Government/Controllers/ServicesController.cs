@@ -1,4 +1,5 @@
-﻿using Government.ApplicationServices.GovernmentServices;
+﻿
+using Government.ApplicationServices.GovernmentServices;
 using Government.Contracts.Services;
 using Government.Errors;
 using Microsoft.AspNetCore.Authorization;
@@ -43,12 +44,9 @@ namespace Government.Controllers
         [Route("{id}")]
         [AllowAnonymous]
 
-        public async Task<IActionResult> GetService([FromRoute] int id, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetServiceDetails([FromRoute] int id, CancellationToken cancellationToken)
         {
-
             var services = await _service.GetServicesByIdAsync(id, cancellationToken);
-
-
             return services.IsSuccess ?
                             Ok(services.Value()) :
                             services.ToProblem(statuscode: StatusCodes.Status404NotFound);
@@ -104,6 +102,29 @@ namespace Government.Controllers
         }
 
 
-    
+        [HttpGet("{serviceId}/fields")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetFields([FromRoute] int serviceId, CancellationToken cancellationToken)
+        {
+
+            var result = await _service.GetServiceFieldAsync(serviceId, cancellationToken);
+
+            return result.IsSuccess ?
+                        Ok(result.Value())
+                      : result.ToProblem(statuscode: StatusCodes.Status404NotFound);
+        }
+
+        [HttpGet("{serviceId}/Files")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetFiles([FromRoute] int serviceId, CancellationToken cancellationToken)
+        {
+
+            var result = await _service.GetServiceFilesAsync(serviceId, cancellationToken);
+
+            return result.IsSuccess ?
+                        Ok(result.Value())
+                      : result.ToProblem(statuscode: StatusCodes.Status404NotFound);
+        }
+
     }
 }

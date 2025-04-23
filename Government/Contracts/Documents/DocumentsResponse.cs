@@ -1,14 +1,14 @@
-﻿using Government.Contracts.Documents.cs;
-
-namespace Government.Contracts.Documents.cs
+﻿namespace Government.Contracts.Documents
 {
     public record DocumentsResponse
     (
        int Id,
-       string FiledName,
-       string Description,
-       string DocumentType,
-       bool IsMandatory
+       string FileName,
+       string ContentType,
+       string FileExtension
 
-    );
+     );
+
+
+
 }

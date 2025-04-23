@@ -6,6 +6,7 @@
         string ServiceDescription,
         decimal Fee,
         string ProcessingTime,
+        string category,
         string ContactInfo,
         List<IFormFile> Files,
         List<ServiceFields> ServiceFields

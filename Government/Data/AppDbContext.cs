@@ -23,6 +23,7 @@ namespace Government.Data
         public DbSet<AttachedDocument> AttachedDocuments { get; set; }
         public DbSet<AdminResponse> AdminsResponse { get; set; }
         public DbSet<Payment> Payments { get; set; }
+        public DbSet<Member> Members { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

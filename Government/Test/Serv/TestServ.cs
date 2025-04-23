@@ -15,6 +15,49 @@ namespace Government.Test.Serv
         private readonly IAttachedFileServcie _attachedFileServcie = attachedFileServcie;
         private readonly string _filesPath = $"{webHostEnvironment.WebRootPath}/uploads";
 
+        public async Task<Result<IEnumerable<AttachedFileDetails>>> DownloadAttachedFilesAsync(int RequestId, CancellationToken cancellationToken = default)
+        {
+            var file = await _context.AttachedDocuments.FindAsync(RequestId);
+
+            if (file is null)
+                return Result.Falire<IEnumerable<AttachedFileDetails>>(RequestErrors.RequestNotFound);
+
+            var Attachedfiles = await _context.AttachedDocuments
+                             .Where(f => f.RequestId == RequestId)
+                             .Select(x=>new AttachedFileDetails(  
+                                 x.Id,
+                                 x.FileName,
+                              //   Path.Combine($"{_filesPath}/RequiredFiles",x.FileName),
+                                 x.ContentType,
+                                 x.FileExtension
+                                 ))
+                             .AsNoTracking()
+                             .ToListAsync(cancellationToken);
+
+
+            return Result.Success<IEnumerable<AttachedFileDetails>>(Attachedfiles);
+        }
+
+        public async Task<Result<DownLoadResponse>> DownloadServiceFileAsync(int FileId, CancellationToken cancellationToken = default)
+        {
+            var file = await _context.RequiredDocuments.FindAsync(FileId);
+
+            if (file is null)
+                return Result.Falire<DownLoadResponse>(ServiceError.FileNotFound);
+           
+            var path = Path.Combine($"{_filesPath}/RequiredFiles", file.FileName);
+
+            MemoryStream memoryStream = new();
+            using FileStream fileStream = new(path, FileMode.Open);
+            fileStream.CopyTo(memoryStream);
+
+            memoryStream.Position = 0;
+
+            var response = new DownLoadResponse(memoryStream.ToArray(), file.ContentType, file.FileName);
+
+            return Result.Success(response);
+        }
+
         public async Task<Result> UpdateFieldsAsync(int ServcieId, FieldsTest fieldsTest, CancellationToken cancellationToken = default)
         {
           
@@ -160,6 +203,9 @@ namespace Government.Test.Serv
                 }
             }
 
+            if (request.ResponseStatus == "Rejected")
+                request.IsEditedAfterRejection = true;
+
             await _context.SaveChangesAsync();
 
             return Result.Success();
@@ -207,9 +253,12 @@ namespace Government.Test.Serv
 
             await _attachedFileServcie.UploadManyAttachedAsync(files, RequestId, cancellationToken);
 
+            if (Request.ResponseStatus == "Rejected")
+                Request.IsEditedAfterRejection = true;
+
             await _context.SaveChangesAsync();
             return Result.Success();
         }
     }
-    }
+}
 

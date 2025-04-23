@@ -14,7 +14,7 @@ namespace Government.ApplicationServices.Results
         {
             // num of users
             var TotalUsers = await _context.Requests
-                                  .Select(x => x.UserId)
+                                  .Select(x => x.MemberId)
                                   .Distinct()
                                   .CountAsync();
            
@@ -69,7 +69,7 @@ namespace Government.ApplicationServices.Results
 
             
               var topRequestUsers = await _context.Requests
-                .GroupBy(r => r.UserId)
+                .GroupBy(r => r.MemberId)
                 .Select(g => new UserUsageDto(
                     g.Key, 
                     _context.Users.Where(u => u.Id == g.Key).Select(u =>$"{u.FirstName} {u.LastName}" ).FirstOrDefault()!,

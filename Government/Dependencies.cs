@@ -50,7 +50,6 @@ namespace Government
             services.AddScoped<IAdminAuthService, AdminAuthService>();
             services.AddScoped<IService, service>();
             services.AddScoped<IAdminResponseToRequest, AdminResponseToRequest>();
-            services.AddScoped<IFieldService, FieldService>();
             services.AddScoped<IEmailSender, EmailService>();
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IDashboardService, DashboardService>();

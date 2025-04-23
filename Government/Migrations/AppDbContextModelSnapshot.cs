@@ -30,6 +30,10 @@ namespace Government.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("AdminId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("RequestId")
                         .HasColumnType("int");
 
@@ -42,13 +46,11 @@ namespace Government.Migrations
                         .HasColumnType("nvarchar(500)");
 
                     b.Property<string>("userId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("RequestId")
-                        .IsUnique();
+                    b.HasIndex("RequestId");
 
                     b.HasIndex("userId");
 
@@ -190,7 +192,7 @@ namespace Government.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@GOVERNMENTSERVICES.COM",
                             NormalizedUserName = "ADMIN@GOVERNMENTSERVICES.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEBk/bJPH04EAONmII/ZwYr5UgBjcLb2tdHP84RUvihhAXQWuVF3DbuRi58F/r7iL7w==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEC7LyvqGKdurQQrI0/iRjUaHIhlUUtiT/O6gaxPpgehES7mhXDXAXuVSdg7nQp9qSA==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "01954439-8011-7cca-9a77-c5c75ebac097",
                             TwoFactorEnabled = false,
@@ -261,6 +263,26 @@ namespace Government.Migrations
                     b.ToTable("Fields", (string)null);
                 });
 
+            modelBuilder.Entity("Government.Entities.Member", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Members");
+                });
+
             modelBuilder.Entity("Government.Entities.Payment", b =>
                 {
                     b.Property<int>("Id")
@@ -298,6 +320,13 @@ namespace Government.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<bool>("IsEditedAfterRejection")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("MemberId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<DateTime>("RequestDate")
                         .HasColumnType("datetime2");
 
@@ -318,15 +347,11 @@ namespace Government.Migrations
                     b.Property<int>("ServiceId")
                         .HasColumnType("int");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("ServiceId");
+                    b.HasIndex("MemberId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("ServiceId");
 
                     b.ToTable("Requests", (string)null);
                 });
@@ -703,16 +728,14 @@ namespace Government.Migrations
             modelBuilder.Entity("Government.Entities.AdminResponse", b =>
                 {
                     b.HasOne("Government.Entities.Request", "Request")
-                        .WithOne("AdminResponse")
-                        .HasForeignKey("Government.Entities.AdminResponse", "RequestId")
+                        .WithMany("AdminResponse")
+                        .HasForeignKey("RequestId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Government.Entities.AppUser", "user")
                         .WithMany("AdminResponses")
-                        .HasForeignKey("userId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .HasForeignKey("userId");
 
                     b.Navigation("Request");
 
@@ -743,19 +766,19 @@ namespace Government.Migrations
 
             modelBuilder.Entity("Government.Entities.Request", b =>
                 {
+                    b.HasOne("Government.Entities.Member", "Member")
+                        .WithMany("Requests")
+                        .HasForeignKey("MemberId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("Government.Entities.Service", "service")
                         .WithMany("Requests")
                         .HasForeignKey("ServiceId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Government.Entities.AppUser", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("User");
+                    b.Navigation("Member");
 
                     b.Navigation("service");
                 });
@@ -872,10 +895,14 @@ namespace Government.Migrations
                     b.Navigation("ServiceFields");
                 });
 
+            modelBuilder.Entity("Government.Entities.Member", b =>
+                {
+                    b.Navigation("Requests");
+                });
+
             modelBuilder.Entity("Government.Entities.Request", b =>
                 {
-                    b.Navigation("AdminResponse")
-                        .IsRequired();
+                    b.Navigation("AdminResponse");
 
                     b.Navigation("AttachedDocuments");
 

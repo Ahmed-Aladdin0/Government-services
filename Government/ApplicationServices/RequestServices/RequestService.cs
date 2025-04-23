@@ -50,15 +50,15 @@ namespace Government.ApplicationServices.RequestServices
         // return Result.Success(request);
 
         //}
-
+        
         public async Task<Result<IEnumerable<RequestsDetailstoUser>>> GetUserRequests(CancellationToken cancellationToken)
         {
 
-            var UserId = _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var memberId = _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier);
 
 
             var userRequests = await _context.Requests
-                                 .Where(x => x.UserId == UserId)
+                                 .Where(x => x.MemberId == memberId)
                                  .Select(x => new RequestsDetailstoUser(
                                      x.Id,
                                      x.ServiceId,
@@ -66,50 +66,43 @@ namespace Government.ApplicationServices.RequestServices
                                      x.RequestDate,
                                      x.RequestStatus,
                                      x.ResponseStatus,
-                                     x.AdminResponse.ResponseText
-                                     ))
+                                     x.AdminResponse
+                                         .OrderByDescending(r => r.ResponseDate)
+                                         .Select(s => s.ResponseText)
+                                         .FirstOrDefault() ?? "No Response Yet"
+                                 ))
                                  .AsNoTracking()
-                                 .ToListAsync();
-
-
-            //if (userRequests == null || !userRequests.Any())
-            //{
-            //    IEnumerable<RequestsDetailstoUser> emptyList = new List<RequestsDetailstoUser>();
-
-            //    return Result.Success(emptyList); // empty list 
-            //}
-
-            //var ReqResponse = userRequests.Adapt<IEnumerable<RequestsDetailstoUser>>();
+                                 .ToListAsync(cancellationToken);
 
             return Result.Success<IEnumerable<RequestsDetailstoUser>>(userRequests);
 
         }
 
 
-        public async Task<Result<IEnumerable<RequestsDetailstoUser>>> GetRequestByStatusAsync(string request, CancellationToken cancellationToken)
-        {
+        //public async Task<Result<IEnumerable<RequestsDetailstoUser>>> GetRequestByStatusAsync(string request, CancellationToken cancellationToken)
+        //{
 
-            var UserId = _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier);
+        //    var UserId = _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            var requests = await _context.Requests.Where(r => r.UserId == UserId && r.RequestStatus == request)
-                        .Select(x => new RequestsDetailstoUser(
-                            x.Id,
-                            x.ServiceId,
-                            x.service.ServiceName,
-                            x.RequestDate,
-                            x.RequestStatus,
-                            x.ResponseStatus,
-                            x.AdminResponse.ResponseText ?? "No response yet"
-                            )
-                            )
-                        .AsNoTracking()
-                        .ToListAsync(cancellationToken);
-            logger.LogInformation($"UserId: {UserId}, RequestStatus: {request}");
+        //    var requests = await _context.Requests.Where(r => r.UserId == UserId && r.RequestStatus == request)
+        //                .Select(x => new RequestsDetailstoUser(
+        //                    x.Id,
+        //                    x.ServiceId,
+        //                    x.service.ServiceName,
+        //                    x.RequestDate,
+        //                    x.RequestStatus,
+        //                    x.ResponseStatus,
+        //                    x.AdminResponse.ResponseText ?? "No response yet"
+        //                    )
+        //                    )
+        //                .AsNoTracking()
+        //                .ToListAsync(cancellationToken);
+        //    logger.LogInformation($"UserId: {UserId}, RequestStatus: {request}");
 
 
-            return Result.Success<IEnumerable<RequestsDetailstoUser>>(requests);
+        //    return Result.Success<IEnumerable<RequestsDetailstoUser>>(requests);
 
-        }
+        //}
        
         public async Task<Result<SubmitResponseDto>> SubmitRequestAsync(SubmitRequestDto requestDto, CancellationToken cancellationToken)
         {
@@ -121,7 +114,7 @@ namespace Government.ApplicationServices.RequestServices
                 var request = new Request
                 {
                     RequestDate = DateTime.UtcNow,
-                    UserId = userId!,
+                    MemberId = userId!,
                     ServiceId = requestDto.ServiceId,
                     
                 };
@@ -157,7 +150,7 @@ namespace Government.ApplicationServices.RequestServices
             }
         }
        
-        public async Task<Result<IEnumerable<UpdateFields>>> GetUserRequestsDetails(int RequestId, CancellationToken cancellationToken)
+        public async Task<Result<IEnumerable<UpdateFields>>> GetUserRequestFileds(int RequestId, CancellationToken cancellationToken)
         {
 
             var request = await _context.Requests.FindAsync(RequestId);
@@ -182,16 +175,6 @@ namespace Government.ApplicationServices.RequestServices
                                                             ))
                                                         .AsNoTracking()
                                                         .ToListAsync(cancellationToken);
-
-            if (!Userdata.Any())
-            {
-
-                return Result.Falire<IEnumerable<UpdateFields>>(RequestErrors.NoDataFound);
-
-
-            }
-
-
 
             return Result.Success<IEnumerable<UpdateFields>>(Userdata);
         }

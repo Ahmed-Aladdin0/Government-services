@@ -17,8 +17,8 @@ namespace Government.Data.DataBaseConfigurations
                
 
             builder.HasOne(x => x.Request)
-            .WithOne(x => x.AdminResponse)
-            .HasForeignKey<AdminResponse>(x => x.RequestId);
+            .WithMany(x => x.AdminResponse)
+            .HasForeignKey(x => x.RequestId);
 
             builder.ToTable("AdminResponses");
 

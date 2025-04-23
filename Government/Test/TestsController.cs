@@ -49,6 +49,18 @@ namespace Government.Test
 
         }
 
+        [HttpGet("download/{id}")]
+        public async Task<IActionResult> Download([FromRoute] int id, CancellationToken cancellationToken)
+        {
+            var result = await test.DownloadServiceFileAsync(id, cancellationToken);
 
+           // var value = result.Value();
+
+            return !result.IsSuccess ?
+                    result.ToProblem(statuscode:StatusCodes.Status404NotFound) :
+                    File(result.Value()!.fileContent, result.Value()!.contentType, result.Value()!.fileName);
+
+            
+        }
     }
 }

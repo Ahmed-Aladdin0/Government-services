@@ -15,6 +15,10 @@ namespace Government.Mapping
             config.NewConfig<Service, ServiceResponse>()
              .Map(dest => dest.category, src => src.category);
 
+            config.NewConfig<Service, ServiceResponse>()
+             .Map(dest => dest.RequiredFiles, src => src.RequiredDocuments.Select(d => d.FileName).ToList());
+
+
             config.NewConfig<RegisterRequest, AppUser>()
           .Map(dest => dest.UserName, src => src.Email);
 
