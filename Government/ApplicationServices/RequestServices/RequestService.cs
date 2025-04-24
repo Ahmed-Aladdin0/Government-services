@@ -5,9 +5,10 @@ using Government.Contracts.Request.Submiting;
 using Government.Entities;
 using Government.Errors;
 using Mapster;
+using SurvayBasket.Abstractions;
 using System.Linq;
 using System.Security.Claims;
-
+using System.Linq.Dynamic.Core;
 namespace Government.ApplicationServices.RequestServices
 {
     public class RequestService(AppDbContext context, IHttpContextAccessor httpContextAccessor,
@@ -21,37 +22,7 @@ namespace Government.ApplicationServices.RequestServices
 
 
 
-        //public async Task<Result<RequestDetailsResponse>> GetRequestAsync(int requestId, CancellationToken cancellationToken)
-        //{
-
-        //    var request = await _context.Requests
-        //                          .Where(r => r.Id == requestId)
-        //                          .Select(x => new RequestDetailsResponse(
-        //                                  x.Id,
-        //                                  x.UserId,
-        //                                  x.service.ServiceName,
-        //                                  x.RequestDate,
-        //                                  x.RequestStatus,
-        //                                  x.ResponseStatus,
-        //                                  x.AdminResponse.ResponseText ?? "No Response",
-        //                                  x.AttachedDocuments.Select(a => a.FileName), /* اعادة الفايل نفسة*/
-        //                                  x.Payments.Select(p => p.PaymentStatus)
-        //                                  )
-        //                                 ).AsNoTracking()
-        //                                  .SingleOrDefaultAsync(cancellationToken);
-
-
-
-        //    if (request == null)
-        //    {
-        //        return Result.Falire<RequestDetailsResponse>(ServiceError.ServiceNotFound);
-        //    }
-
-        // return Result.Success(request);
-
-        //}
-        
-        public async Task<Result<IEnumerable<RequestsDetailstoUser>>> GetUserRequests(CancellationToken cancellationToken)
+        public async Task<Result<IEnumerable<RequestsDetailstoUser>>> GetAllUserRequests(CancellationToken cancellationToken)
         {
 
             var memberId = _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -78,32 +49,64 @@ namespace Government.ApplicationServices.RequestServices
 
         }
 
+        public async Task<Result<RequestDetailsResponse>> GetUserRequestAsync(int requestId, CancellationToken cancellationToken)
+        {
+            var request = await _context.Requests.FindAsync(requestId);
+            if (request == null)
+                return Result.Falire<RequestDetailsResponse>(RequestErrors.RequestNotFound);
 
-        //public async Task<Result<IEnumerable<RequestsDetailstoUser>>> GetRequestByStatusAsync(string request, CancellationToken cancellationToken)
-        //{
-
-        //    var UserId = _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-        //    var requests = await _context.Requests.Where(r => r.UserId == UserId && r.RequestStatus == request)
-        //                .Select(x => new RequestsDetailstoUser(
-        //                    x.Id,
-        //                    x.ServiceId,
-        //                    x.service.ServiceName,
-        //                    x.RequestDate,
-        //                    x.RequestStatus,
-        //                    x.ResponseStatus,
-        //                    x.AdminResponse.ResponseText ?? "No response yet"
-        //                    )
-        //                    )
-        //                .AsNoTracking()
-        //                .ToListAsync(cancellationToken);
-        //    logger.LogInformation($"UserId: {UserId}, RequestStatus: {request}");
+            var Request = await _context.Requests
+                                  .Where(r => r.Id == requestId)
+                                  .Select(x => new RequestDetailsResponse(
+                                          x.Id,
+                                          x.MemberId,
+                                          x.service.ServiceName,
+                                          x.RequestDate,
+                                          x.RequestStatus,
+                                          x.ResponseStatus,
+                                          x.AdminResponse.OrderByDescending(x=>x.ResponseDate).Select(x=>x.ResponseText).FirstOrDefault() ?? "No Response"
+                                         
+                                          )
+                                         ).AsNoTracking()
+                                          .SingleOrDefaultAsync(cancellationToken);
 
 
-        //    return Result.Success<IEnumerable<RequestsDetailstoUser>>(requests);
 
-        //}
-       
+          
+
+            return Result.Success(Request)!;
+
+        }
+
+        public async Task<Result<IEnumerable<RequestsDetailstoUser>>> GetUserequestsByStatusAsync(string requestStatus, CancellationToken cancellationToken)
+        {
+
+            var memberId = _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var requests = await _context.Requests.Where(r => r.MemberId == memberId && r.RequestStatus == requestStatus)
+                        .Select(x => new RequestsDetailstoUser(
+                            x.Id,
+                            x.ServiceId,
+                            x.service.ServiceName,
+                            x.RequestDate,
+                            x.RequestStatus,
+                            x.ResponseStatus,
+                            x.AdminResponse
+                            .OrderByDescending(r => r.ResponseDate)
+                            .Select(s => s.ResponseText)
+                            .FirstOrDefault() ?? "No Response Yet"
+                            )
+                            )
+                        .AsNoTracking()
+                        .ToListAsync(cancellationToken);
+
+           // logger.LogInformation($"UserId: {UserId}, RequestStatus: {request}");
+
+
+            return Result.Success<IEnumerable<RequestsDetailstoUser>>(requests);
+
+        }
+
         public async Task<Result<SubmitResponseDto>> SubmitRequestAsync(SubmitRequestDto requestDto, CancellationToken cancellationToken)
         {
             var userId = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
@@ -204,6 +207,55 @@ namespace Government.ApplicationServices.RequestServices
             return Result.Success();
         }
 
+        public async Task<Result<PaginationList<RequestsDetails>>> GetAllRequests(RequestQueryParameters parameters,CancellationToken cancellationToken)
+        {
+            var query = _context.Requests
+                    .Include(r => r.Member)
+                    .Include(r => r.service)
+                    .AsQueryable();
+
+            //  Search
+            if (!string.IsNullOrWhiteSpace(parameters.Search))
+            {
+                var search = parameters.Search.Trim();
+
+                query = query.Where(r =>
+                    //r.Member.FirstName.Contains(search) ||
+                    //r.Member.LastName.Contains(search) ||
+                    r.Id.ToString().Contains(search)) ;//||
+                   // r.MemberId.Contains(search));     // 
+            }
+            //  Filter
+            if (!string.IsNullOrEmpty(parameters.RequestStatus))
+                query = query.Where(r => r.RequestStatus == parameters.RequestStatus);
+
+            if (!string.IsNullOrEmpty(parameters.ResponseStatus))
+                query = query.Where(r => r.ResponseStatus == parameters.ResponseStatus);
+
+            //  Sorting
+            if (!string.IsNullOrEmpty(parameters.SortBy))
+            {
+                query = query.OrderBy($"{parameters.SortBy} {parameters.SortDirection}");
+
+            };
+            if (parameters.onlyEditedAfterRejection == true)
+            {
+                query = query.Where(r => r.IsEditedAfterRejection == true);
+            }
+
+
+            //  Pagination
+            var source = query
+                    //.Include(r => r.Member)
+                    //.Include(r => r.service)
+                    .ProjectToType<RequestsDetails>()
+                    .AsNoTracking();
+
+            var response = await PaginationList<RequestsDetails>.CreateAsync(source, parameters.PageNumber, parameters.PageSize, cancellationToken);
+
+
+            return Result.Success(response);
+        }
     }
 }
 

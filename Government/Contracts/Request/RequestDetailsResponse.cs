@@ -9,9 +9,7 @@
         DateTime RequestDate,
         string RequestStatus,
         string ResponseStatus,
-        string ResponseText,
-        IEnumerable<string> AttachedDocuments,
-        IEnumerable<string> Payments
+        string ResponseText
     );  
 }
 

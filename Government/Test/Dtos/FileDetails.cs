@@ -1,6 +1,6 @@
 ﻿namespace Government.Test.Dtos
 {
-    public record AttachedFileDetails
+    public record FileDetails
     (
         int Id,
        string FileName,

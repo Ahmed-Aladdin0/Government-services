@@ -32,7 +32,7 @@ namespace Government.ApplicationServices.AdminServices
             var adminResponse = new AdminResponse
             {
                 RequestId = adminReplyToREquest.RequestId,
-                AdminId = adminId!,
+                UserId = adminId!,
                 ResponseText = adminReplyToREquest.ResponseText,
                 ResponseDate = DateTime.UtcNow
             };

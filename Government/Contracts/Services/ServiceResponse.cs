@@ -1,4 +1,6 @@
-﻿namespace Government.Contracts.Services
+﻿using Government.Test.Dtos;
+
+namespace Government.Contracts.Services
 {
     public record ServiceResponse
      (  
@@ -8,8 +10,8 @@
         string category,
         decimal Fee,
         string ProcessingTime,
-        string ContactInfo,
-        List<string> RequiredFiles
+        string ContactInfo
+        
         );
 
 }

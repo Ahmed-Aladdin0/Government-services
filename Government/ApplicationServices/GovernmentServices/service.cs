@@ -55,16 +55,16 @@ namespace Government.ApplicationServices.GovernmentServices
             return Result.Success(serviceResponse);
         }
 
-        public async Task<Result<ServiceResponse>> GetServicesByIdAsync(int serviceId, CancellationToken cancellationToken = default)
+        public async Task<Result<ServiceDetails>> GetServicesByIdAsync(int serviceId, CancellationToken cancellationToken = default)
         {
             var Specificservice = await _context.Services
                       .Include(x => x.RequiredDocuments)
                       .FirstOrDefaultAsync(x => x.Id == serviceId, cancellationToken);
 
             if (Specificservice is null)
-                return Result.Falire<ServiceResponse>(ServiceError.ServiceNotFound);
+                return Result.Falire<ServiceDetails>(ServiceError.ServiceNotFound);
 
-            var serviceResponse = Specificservice.Adapt<ServiceResponse>();
+            var serviceResponse = Specificservice.Adapt<ServiceDetails>();
 
             return Result.Success(serviceResponse)!;
 

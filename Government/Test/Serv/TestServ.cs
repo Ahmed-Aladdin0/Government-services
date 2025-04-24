@@ -15,16 +15,16 @@ namespace Government.Test.Serv
         private readonly IAttachedFileServcie _attachedFileServcie = attachedFileServcie;
         private readonly string _filesPath = $"{webHostEnvironment.WebRootPath}/uploads";
 
-        public async Task<Result<IEnumerable<AttachedFileDetails>>> DownloadAttachedFilesAsync(int RequestId, CancellationToken cancellationToken = default)
+        public async Task<Result<IEnumerable<FileDetails>>> DownloadAttachedFilesAsync(int RequestId, CancellationToken cancellationToken = default)
         {
             var file = await _context.AttachedDocuments.FindAsync(RequestId);
 
             if (file is null)
-                return Result.Falire<IEnumerable<AttachedFileDetails>>(RequestErrors.RequestNotFound);
+                return Result.Falire<IEnumerable<FileDetails>>(RequestErrors.RequestNotFound);
 
             var Attachedfiles = await _context.AttachedDocuments
                              .Where(f => f.RequestId == RequestId)
-                             .Select(x=>new AttachedFileDetails(  
+                             .Select(x=>new FileDetails(  
                                  x.Id,
                                  x.FileName,
                               //   Path.Combine($"{_filesPath}/RequiredFiles",x.FileName),
@@ -35,7 +35,7 @@ namespace Government.Test.Serv
                              .ToListAsync(cancellationToken);
 
 
-            return Result.Success<IEnumerable<AttachedFileDetails>>(Attachedfiles);
+            return Result.Success<IEnumerable<FileDetails>>(Attachedfiles);
         }
 
         public async Task<Result<DownLoadResponse>> DownloadServiceFileAsync(int FileId, CancellationToken cancellationToken = default)
@@ -203,7 +203,7 @@ namespace Government.Test.Serv
                 }
             }
 
-            if (request.ResponseStatus == "Rejected")
+            if (request.RequestStatus == "Rejected")
                 request.IsEditedAfterRejection = true;
 
             await _context.SaveChangesAsync();
@@ -253,7 +253,7 @@ namespace Government.Test.Serv
 
             await _attachedFileServcie.UploadManyAttachedAsync(files, RequestId, cancellationToken);
 
-            if (Request.ResponseStatus == "Rejected")
+            if (Request.RequestStatus == "Rejected")
                 Request.IsEditedAfterRejection = true;
 
             await _context.SaveChangesAsync();

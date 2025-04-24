@@ -20,6 +20,8 @@ namespace Government.Data.DataBaseConfigurations
             .WithMany(x => x.AdminResponse)
             .HasForeignKey(x => x.RequestId);
 
+
+
             builder.ToTable("AdminResponses");
 
         }
