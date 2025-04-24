@@ -7,6 +7,7 @@ using Government.Entities;
 using Government.Errors;
 using Mapster;
 using Microsoft.Extensions.Logging;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Government.ApplicationServices.GovernmentServices
 {
@@ -16,31 +17,34 @@ namespace Government.ApplicationServices.GovernmentServices
         private readonly AppDbContext _context = context;
         private readonly IRequiredFileServcie _fileServcie = fileServcie;
 
-        public async Task<Result<IEnumerable<ServiceResponse>>> GetAllAvailableServicesAsync(string serviceCategory, CancellationToken cancellationToken = default)
+        public async Task<Result<IEnumerable<ServiceResponse>>> GetAllAvailableServicesAsync(ServiceSearch serviceSearch, CancellationToken cancellationToken = default)
         {
-            if (serviceCategory == "All")
+
+            var query = _context.Services
+                         .Where(x => x.IsAvailable)
+                         .AsNoTracking()
+                         .AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(serviceSearch.ServiceName))
             {
-                var services = await _context.Services
-                             .Where(x => x.IsAvailable)
-                             .AsNoTracking()
-                             .ToListAsync(cancellationToken);
+                var search = serviceSearch.ServiceName.Trim();
 
-                var serviceResponse = services.Adapt<IEnumerable<ServiceResponse>>();
-                return Result.Success(serviceResponse);
-
-            }
-            else
-            {
-
-                var services = await _context.Services
-                                        .Where(x => x.IsAvailable && x.category == serviceCategory)
-                                        .AsNoTracking()
-                                        .ToListAsync(cancellationToken);
-
-                var serviceResponse = services.Adapt<IEnumerable<ServiceResponse>>();
-                return Result.Success(serviceResponse);
+                query = query.Where(r =>
+                    r.ServiceName.Contains(search));
             }
 
+            if (!string.IsNullOrWhiteSpace(serviceSearch.serviceCategory))
+            {
+                query = query.Where(r => 
+                    r.category == serviceSearch.serviceCategory);
+
+            }
+
+            var result = query
+                         .ProjectToType<ServiceResponse>()
+                         .AsNoTracking();
+
+            return Result.Success<IEnumerable<ServiceResponse>>(result);
 
         }
 

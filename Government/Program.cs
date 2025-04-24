@@ -1,11 +1,16 @@
 
 using Government.Errors;
+using System.Net;
 
 var builder = WebApplication.CreateBuilder(args);
 
 
 builder.Services.AddDependancy(builder.Configuration);
 
+//builder.WebHost.ConfigureKestrel(serverOptions =>
+//{
+//    serverOptions.Listen(IPAddress.Loopback, 5050); // ????? ?????? ??? 5050
+//});
 
 var app = builder.Build();
 

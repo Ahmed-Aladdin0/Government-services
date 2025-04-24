@@ -1,4 +1,5 @@
-﻿using Government.Contracts.Documents;
+﻿using Government.ApplicationServices.UploadFiles;
+using Government.Contracts.Documents;
 using Government.Contracts.Fields;
 using Government.Contracts.Services;
 
@@ -8,7 +9,7 @@ namespace Government.ApplicationServices.GovernmentServices
     {
 
         Task<Result<IEnumerable<ServiceResponse>>> GetAllServicesAsync(CancellationToken cancellationToken = default);
-        Task<Result<IEnumerable<ServiceResponse>>> GetAllAvailableServicesAsync(string serviceCategory,CancellationToken cancellationToken = default);
+        Task<Result<IEnumerable<ServiceResponse>>> GetAllAvailableServicesAsync(ServiceSearch serviceSearch,CancellationToken cancellationToken = default);
         Task<Result<ServiceDetails>> GetServicesByIdAsync(int serviceId ,CancellationToken cancellationToken = default);
         Task<Result<IEnumerable<FieldsResponse>>> GetServiceFieldAsync(int serviceId, CancellationToken cancellationToken);
         Task<Result<IEnumerable<DocumentsResponse>>> GetServiceFilesAsync(int serviceId, CancellationToken cancellationToken);

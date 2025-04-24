@@ -26,11 +26,11 @@ namespace Government.Controllers
 
         /* For Members */
         [HttpGet("Available")]
-        [AllowAnonymous]
-        public async Task<IActionResult> GetAvailableServices([FromQuery] string servicecategory, CancellationToken cancellationToken)
+        //[AllowAnonymous]
+        public async Task<IActionResult> GetAvailableServices([FromQuery] ServiceSearch serviceSearch, CancellationToken cancellationToken)
         {
 
-            var services = await _service.GetAllAvailableServicesAsync(servicecategory, cancellationToken);
+            var services = await _service.GetAllAvailableServicesAsync(serviceSearch, cancellationToken);
             return Ok(services.Value());
         }
 
