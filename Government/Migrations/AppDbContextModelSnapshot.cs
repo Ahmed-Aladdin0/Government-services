@@ -189,7 +189,7 @@ namespace Government.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@GOVERNMENTSERVICES.COM",
                             NormalizedUserName = "ADMIN@GOVERNMENTSERVICES.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEBOhysGiUjpTUh36kMdkny0USXGHYTdtAacMTMSSDirSHvXUG+i1ommjcENJPzch9A==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEFk4rzQzImUy/ybn31pr22R6L1EukxEHj+gAQSrIBkMpCLP/EbrEn8vUfrFq5ZIZYg==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "01954439-8011-7cca-9a77-c5c75ebac097",
                             TwoFactorEnabled = false,

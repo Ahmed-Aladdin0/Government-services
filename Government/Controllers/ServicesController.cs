@@ -26,7 +26,7 @@ namespace Government.Controllers
 
         /* For Members */
         [HttpGet("Available")]
-        //[AllowAnonymous]
+        [AllowAnonymous]
         public async Task<IActionResult> GetAvailableServices([FromQuery] ServiceSearch serviceSearch, CancellationToken cancellationToken)
         {
 

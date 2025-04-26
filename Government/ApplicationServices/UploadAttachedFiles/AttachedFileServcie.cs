@@ -36,7 +36,12 @@ namespace Government.ApplicationServices.UploadFiles
 
         private async Task<AttachedDocument> SaveAttachedFiles(IFormFile file, int RequestId,  CancellationToken cancellationToken = default)
         {
-           // var randomFileName = Path.GetRandomFileName();
+            // var randomFileName = Path.GetRandomFileName();
+
+            if (!Directory.Exists(_filesPath))
+            {
+                Directory.CreateDirectory(_filesPath); // إنشاء الفولدر إذا مش موجود
+            }
 
             var uploadedFile = new AttachedDocument
             {
