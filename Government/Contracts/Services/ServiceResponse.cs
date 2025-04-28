@@ -1,6 +1,4 @@
-﻿using Government.Test.Dtos;
-
-namespace Government.Contracts.Services
+﻿namespace Government.Contracts.Services
 {
     public record ServiceResponse
      (  

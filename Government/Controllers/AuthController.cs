@@ -23,7 +23,7 @@ namespace Government.Controllers
             _adminauthService = AdminauthService;
         }
 
-        [HttpPost("AdminLogin")]
+        [HttpPost("Login")]
 
         public async Task<IActionResult> AdminLoginAsync(LoginRequest loginRequest, CancellationToken cancellationToken)
         {
@@ -34,50 +34,50 @@ namespace Government.Controllers
 
         }
 
-        [HttpPost("Register")]
-        public async Task<IActionResult> RegisterAsync(RegisterRequest Request, CancellationToken cancellationToken)
-        {
+        //[HttpPost("Register")]
+        //public async Task<IActionResult> RegisterAsync(RegisterRequest Request, CancellationToken cancellationToken)
+        //{
 
-            var authresult = await _adminauthService.RegisterAsync(Request, cancellationToken);
+        //    var authresult = await _adminauthService.RegisterAsync(Request, cancellationToken);
 
-            if (authresult.IsSuccess)
-                return Ok("Registration completed successfully , Please confirm your Email ");
+        //    if (authresult.IsSuccess)
+        //        return Ok("Registration completed successfully , Please confirm your Email ");
 
-            if (authresult.Error.Equals(UsersErrors.DublicatedEmail))
-                return authresult.ToProblem(statuscode: StatusCodes.Status409Conflict);
+        //    if (authresult.Error.Equals(UsersErrors.DublicatedEmail))
+        //        return authresult.ToProblem(statuscode: StatusCodes.Status409Conflict);
 
-            else
-                return authresult.ToProblem(statuscode: StatusCodes.Status400BadRequest);
+        //    else
+        //        return authresult.ToProblem(statuscode: StatusCodes.Status400BadRequest);
 
-        }
-
-
-        [HttpPost("Confirm-Email")]
-        public async Task<IActionResult> ConfirmEmailAsync(ConfirmationEmailRequest Request, CancellationToken cancellationToken)
-        {
-
-            var authresult = await _adminauthService.ConfirmEmailAsync(Request, cancellationToken);
-
-            if (authresult.IsSuccess)
-                return Ok("Confirmation completed successfully , You can Login now ");
-
-            if (authresult.Error.Equals(UsersErrors.InvalidCode))
-                return authresult.ToProblem(statuscode: StatusCodes.Status401Unauthorized);
-
-            else
-                return authresult.ToProblem(statuscode: StatusCodes.Status400BadRequest);
-
-        }
+        //}
 
 
-        [HttpPost("Resend-Confirm-Email")]
-        public async Task<IActionResult> ResendConfirmEmailAsync(ResendConfirmationEmail Request, CancellationToken cancellationToken)
-        {
+        //[HttpPost("Confirm-Email")]
+        //public async Task<IActionResult> ConfirmEmailAsync(ConfirmationEmailRequest Request, CancellationToken cancellationToken)
+        //{
 
-            var authresult = await _adminauthService.ResendConfirmEmailAsync(Request, cancellationToken);
+        //    var authresult = await _adminauthService.ConfirmEmailAsync(Request, cancellationToken);
 
-            return (authresult.IsSuccess) ? Ok("Email is Resent again") : authresult.ToProblem(statuscode: StatusCodes.Status400BadRequest);
-        }
+        //    if (authresult.IsSuccess)
+        //        return Ok("Confirmation completed successfully , You can Login now ");
+
+        //    if (authresult.Error.Equals(UsersErrors.InvalidCode))
+        //        return authresult.ToProblem(statuscode: StatusCodes.Status401Unauthorized);
+
+        //    else
+        //        return authresult.ToProblem(statuscode: StatusCodes.Status400BadRequest);
+
+        //}
+
+
+        //[HttpPost("Resend-Confirm-Email")]
+        //public async Task<IActionResult> ResendConfirmEmailAsync(ResendConfirmationEmail Request, CancellationToken cancellationToken)
+        //{
+
+        //    var authresult = await _adminauthService.ResendConfirmEmailAsync(Request, cancellationToken);
+
+        //    return (authresult.IsSuccess) ? Ok("Email is Resent again") : authresult.ToProblem(statuscode: StatusCodes.Status400BadRequest);
+        //}
 
 
     }

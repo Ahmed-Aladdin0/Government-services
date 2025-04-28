@@ -1,11 +1,26 @@
-
+﻿
 using Government.Errors;
+using Serilog;
 using System.Net;
 
 var builder = WebApplication.CreateBuilder(args);
 
 
+
 builder.Services.AddDependancy(builder.Configuration);
+
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Override("Microsoft", Serilog.Events.LogEventLevel.Warning) 
+    .MinimumLevel.Error() 
+    .WriteTo.File(
+        "Logs/log-.txt",
+        rollingInterval: RollingInterval.Day,
+        restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Error
+    )
+    .CreateLogger();
+
+// Replace the default logger
+builder.Host.UseSerilog();
 
 //builder.WebHost.ConfigureKestrel(serverOptions =>
 //{

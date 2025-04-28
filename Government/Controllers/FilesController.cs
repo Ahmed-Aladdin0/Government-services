@@ -1,37 +1,81 @@
-﻿using Government.ApplicationServices.UploadFiles;
-using Government.Contracts;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using SurvayBasket.ApplicationServices.UserAccount;
-using SurvayBasket.Contracts.AccountProfile.cs;
+﻿using Government.ApplicationServices.Files;
+using Government.Contracts.FilesAndFileds;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Government.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class FilesController(IRequiredFileServcie fileServcie) : ControllerBase
+    public class FilesController( IFileService fileService) : ControllerBase
     {
-        private readonly IRequiredFileServcie fileServcie = fileServcie;
+     
+        private readonly IFileService fileService = fileService;
 
-        [HttpPost("Upload")]
-      
-        public async Task<ActionResult> Upload([FromForm] UploadFile request)
+        [HttpGet("Attached/Request/{requestId}")]
+        public async Task<IActionResult> GetUserRequestFiles([FromRoute] int requestId, CancellationToken cancellationToken)
         {
 
-            var userInfo = await fileServcie.UploadAsync(request.File,request.serviceid);
+            var result = await fileService.GetAttachedFilesAsync(requestId, cancellationToken);
 
-            return Created();
+            return result.IsSuccess ? Ok(result.Value()) : result.ToProblem(statuscode: StatusCodes.Status404NotFound);
+
+        }
+
+
+        [HttpPut("Attached/Request/{requestId}")]
+        public async Task<IActionResult> UpdateUserFiles([FromRoute] int requestId, [FromForm] UserFiles userFiles, CancellationToken cancellationToken)
+        {
+            var result = await fileService.UpdateUserFilesAsync(requestId, userFiles, cancellationToken);
+
+            return result.IsSuccess ? NoContent() : result.ToProblem(statuscode: StatusCodes.Status404NotFound);
+
+        }
+
+
+        [HttpGet("Required/Service/{serviceId}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetServiceFiles([FromRoute] int serviceId, CancellationToken cancellationToken)
+        {
+
+            var result = await fileService.GetServiceFilesAsync(serviceId, cancellationToken);
+
+            return result.IsSuccess ?
+                        Ok(result.Value())
+                      : result.ToProblem(statuscode: StatusCodes.Status404NotFound);
+        }
+
+
+        [HttpPut("Required/Servcie/{serviceId}")]
+        public async Task<IActionResult> UpdateServiceFiles([FromRoute] int serviceId, [FromForm] FilesTest filesTest, CancellationToken cancellationToken)
+        {
+            var result = await fileService.UpdateFilesAsync(serviceId, filesTest, cancellationToken);
+
+            return result.IsSuccess ? NoContent() : result.ToProblem(statuscode: StatusCodes.Status404NotFound);
+
+        }
+
+
+        [HttpGet(" Required/Download/{id}")]
+        public async Task<IActionResult> DownloadServiceRequiredFile([FromRoute] int id, CancellationToken cancellationToken)
+        {
+            var result = await fileService.DownloadServiceFileAsync(id, cancellationToken);
+
+            return !result.IsSuccess ?
+                    result.ToProblem(statuscode: StatusCodes.Status404NotFound) :
+                    File(result.Value()!.fileContent, result.Value()!.contentType, result.Value()!.fileName);
 
 
         }
-        [HttpPost("UploadMany")]
 
-        public async Task<ActionResult> UploadMany([FromForm] UploadManyFiles request)
+
+        [HttpGet("Attached/Download/{id}")]
+        public async Task<IActionResult> DownloadUserAttachedFile([FromRoute] int id, CancellationToken cancellationToken)
         {
+            var result = await fileService.DownloadAttachedFileAsync(id, cancellationToken);
 
-            var userInfo = await fileServcie.UploadManyAsync(request.File, request.serviceid);
-
-            return Created();
+            return !result.IsSuccess ?
+                    result.ToProblem(statuscode: StatusCodes.Status404NotFound) :
+                    File(result.Value()!.fileContent, result.Value()!.contentType, result.Value()!.fileName);
 
 
         }

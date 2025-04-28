@@ -1,13 +1,8 @@
 ﻿using Government.ApplicationServices.UploadFiles;
-using Government.Contracts.Documents;
-using Government.Contracts.Fields;
-using Government.Contracts.Request.Submiting;
 using Government.Contracts.Services;
-using Government.Entities;
 using Government.Errors;
 using Mapster;
-using Microsoft.Extensions.Logging;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+
 
 namespace Government.ApplicationServices.GovernmentServices
 {
@@ -168,7 +163,7 @@ namespace Government.ApplicationServices.GovernmentServices
 
         }
 
-        public async Task<Result> UpdateServiceAsync(int serviceId, ServiceRequest request, CancellationToken cancellationToken = default)
+        public async Task<Result> UpdateServiceDetailsAsync(int serviceId, ServcieDescription request, CancellationToken cancellationToken = default)
         {
             var service = await _context.Services.SingleOrDefaultAsync(x => x.Id == serviceId, cancellationToken); // check service id 
 
@@ -191,49 +186,8 @@ namespace Government.ApplicationServices.GovernmentServices
 
         }
 
-        public async Task<Result<IEnumerable<FieldsResponse>>> GetServiceFieldAsync(int serviceId, CancellationToken cancellationToken)
-        {
-            var service = await context.Services.SingleOrDefaultAsync(x => x.Id == serviceId, cancellationToken); // check service id 
 
-            if (service is null)
-                return Result.Falire<IEnumerable<FieldsResponse>>(ServiceError.ServiceNotFound);
-
-            var fields = await context.ServicesField
-                             .Where(x => x.ServiceId == serviceId)
-                             .Select(x => new FieldsResponse(
-                                 x.Field.Id,
-                                 x.Field.FieldName,
-                                 x.Field.Description,
-                                 x.Field.HtmlType
-                                 //x.Field.HtmlType == "text" || x.Field.HtmlType == "textarea" ? "string" :
-                                 //x.Field.HtmlType == "number" ? "int" : // افتراض إن number بيبدأ كـ int، الـ frontend هيحدد float لو فيه كسور
-                                 //x.Field.HtmlType == "date" || x.Field.HtmlType == "datetime-local" ? "date" : "unknown"
-                                 ))
-                             .AsNoTracking()
-                             .ToListAsync(cancellationToken);
-
-            return Result.Success<IEnumerable<FieldsResponse>>(fields);
-
-
-        }
-
-        public async Task<Result<IEnumerable<DocumentsResponse>>> GetServiceFilesAsync(int serviceId, CancellationToken cancellationToken)
-        {
-       
-            var service = await context.Services.SingleOrDefaultAsync(x => x.Id == serviceId, cancellationToken); // check service id 
-
-            if (service is null)
-                return Result.Falire<IEnumerable<DocumentsResponse>>(ServiceError.ServiceNotFound);
-
-            var Documents = await context.RequiredDocuments
-                             .Where(x => x.ServiceId == serviceId)
-                             .ProjectToType<DocumentsResponse>()
-                             .AsNoTracking()
-                             .ToListAsync(cancellationToken);
-
-            return Result.Success<IEnumerable<DocumentsResponse>>(Documents);
-
-        }
+      
     }
     
 }

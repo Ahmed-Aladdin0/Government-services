@@ -18,7 +18,7 @@ namespace Government.Controllers
         }
 
         [HttpPost]
-        [Route("CreateResponseByAdmin")]
+        [Route("Response-To-Request")]
         [Authorize]
         public async Task<IActionResult> CreateResponseByAdmin (AdminReply adminReply , CancellationToken cancellationToken)
         {

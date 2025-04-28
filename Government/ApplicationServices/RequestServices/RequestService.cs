@@ -1,5 +1,4 @@
 ﻿using Government.ApplicationServices.UploadFiles;
-using Government.Contracts.Fields;
 using Government.Contracts.Request;
 using Government.Contracts.Request.Submiting;
 using Government.Entities;
@@ -21,6 +20,55 @@ namespace Government.ApplicationServices.RequestServices
         private readonly IAttachedFileServcie attachedFileServcie = attachedFileServcie;
 
 
+        public async Task<Result<PaginationList<RequestsDetails>>> GetAllRequests(RequestQueryParameters parameters, CancellationToken cancellationToken)
+        {
+            var query = _context.Requests
+                    .Include(r => r.Member)
+                    .Include(r => r.service)
+                    .AsQueryable();
+
+            //  Search
+            if (!string.IsNullOrWhiteSpace(parameters.Search))
+            {
+                var search = parameters.Search.Trim();
+
+                query = query.Where(r =>
+                    //r.Member.FirstName.Contains(search) ||
+                    //r.Member.LastName.Contains(search) ||
+                    r.Id.ToString().Contains(search));//||
+                                                      // r.MemberId.Contains(search));     // 
+            }
+            //  Filter
+            if (!string.IsNullOrEmpty(parameters.RequestStatus))
+                query = query.Where(r => r.RequestStatus == parameters.RequestStatus);
+
+            if (!string.IsNullOrEmpty(parameters.ResponseStatus))
+                query = query.Where(r => r.ResponseStatus == parameters.ResponseStatus);
+
+            //  Sorting
+            if (!string.IsNullOrEmpty(parameters.SortBy))
+            {
+                query = query.OrderBy($"{parameters.SortBy} {parameters.SortDirection}");
+
+            };
+            if (parameters.onlyEditedAfterRejection == true)
+            {
+                query = query.Where(r => r.IsEditedAfterRejection == true);
+            }
+
+
+            //  Pagination
+            var source = query
+                    //.Include(r => r.Member)
+                    //.Include(r => r.service)
+                    .ProjectToType<RequestsDetails>()
+                    .AsNoTracking();
+
+            var response = await PaginationList<RequestsDetails>.CreateAsync(source, parameters.PageNumber, parameters.PageSize, cancellationToken);
+
+
+            return Result.Success(response);
+        }
 
         public async Task<Result<IEnumerable<RequestsDetailstoUser>>> GetAllUserRequests(CancellationToken cancellationToken)
         {
@@ -153,109 +201,32 @@ namespace Government.ApplicationServices.RequestServices
             }
         }
        
-        public async Task<Result<IEnumerable<UpdateFields>>> GetUserRequestFileds(int RequestId, CancellationToken cancellationToken)
-        {
 
-            var request = await _context.Requests.FindAsync(RequestId);
-            if (request == null)
-                return Result.Falire<IEnumerable<UpdateFields>>(RequestErrors.RequestNotFound);
-
-            var Userdata = await _context.ServicesData.Where(x => x.RequestId == RequestId).
-                                                        Select(x => new UpdateFields(
-                                                            x.FieldId,
-                                                            x.Field.FieldName,
-                                                            x.Field.HtmlType,
-                                                            x.Id,
-                                                            x.FieldValueString,
-                                                            x.FieldValueInt,
-                                                            x.FieldValueFloat,
-                                                            x.FieldValueDate,
-                                                            x.FieldValueString != null ? "string" :
-                                                            x.FieldValueInt != null ? "int" : 
-                                                            x.FieldValueFloat != null ? "float" : 
-                                                            x.FieldValueDate != null ? "date" : "unknown"
-
-                                                            ))
-                                                        .AsNoTracking()
-                                                        .ToListAsync(cancellationToken);
-
-            return Result.Success<IEnumerable<UpdateFields>>(Userdata);
-        }
-
-        public async Task<Result> UpdateRequestAsync(int requestId, IEnumerable<UpdateRequest> requestDto, CancellationToken cancellationToken)
-        {
+      ////  public async Task<Result> UpdateRequestAsync(int requestId, IEnumerable<UpdateRequest> requestDto, CancellationToken cancellationToken)
+      //  {
        
-            var request = await _context.Requests.FindAsync(requestId);
-            if (request == null)
-                return Result.Falire<UpdateResponse>(RequestErrors.RequestNotFound);
+      //      var request = await _context.Requests.FindAsync(requestId);
+      //      if (request == null)
+      //          return Result.Falire<UpdateResponse>(RequestErrors.RequestNotFound);
 
-            foreach (var fieldDto in requestDto)
-            {
-                var fieldData = await _context.ServicesData.FindAsync(fieldDto.FieldDataId);
-                if (fieldData == null)
-                    return Result.Falire<UpdateResponse>(RequestErrors.FieldDataNotFound);
+      //      foreach (var fieldDto in requestDto)
+      //      {
+      //          var fieldData = await _context.ServicesData.FindAsync(fieldDto.FieldDataId);
+      //          if (fieldData == null)
+      //              return Result.Falire<UpdateResponse>(RequestErrors.FieldDataNotFound);
 
-                var field = await _context.Fields.FindAsync(fieldDto.FieldId);
-                if (field == null)
-                    return Result.Falire<UpdateResponse>(RequestErrors.FieldNotFound);
+      //          var field = await _context.Fields.FindAsync(fieldDto.FieldId);
+      //          if (field == null)
+      //              return Result.Falire<UpdateResponse>(RequestErrors.FieldNotFound);
 
-                fieldDto.Adapt(fieldData);
-            }
+      //          fieldDto.Adapt(fieldData);
+      //      }
 
-            await _context.SaveChangesAsync(cancellationToken);
+      //      await _context.SaveChangesAsync(cancellationToken);
 
-            return Result.Success();
-        }
+      //      return Result.Success();
+      //  }
 
-        public async Task<Result<PaginationList<RequestsDetails>>> GetAllRequests(RequestQueryParameters parameters,CancellationToken cancellationToken)
-        {
-            var query = _context.Requests
-                    .Include(r => r.Member)
-                    .Include(r => r.service)
-                    .AsQueryable();
-
-            //  Search
-            if (!string.IsNullOrWhiteSpace(parameters.Search))
-            {
-                var search = parameters.Search.Trim();
-
-                query = query.Where(r =>
-                    //r.Member.FirstName.Contains(search) ||
-                    //r.Member.LastName.Contains(search) ||
-                    r.Id.ToString().Contains(search)) ;//||
-                   // r.MemberId.Contains(search));     // 
-            }
-            //  Filter
-            if (!string.IsNullOrEmpty(parameters.RequestStatus))
-                query = query.Where(r => r.RequestStatus == parameters.RequestStatus);
-
-            if (!string.IsNullOrEmpty(parameters.ResponseStatus))
-                query = query.Where(r => r.ResponseStatus == parameters.ResponseStatus);
-
-            //  Sorting
-            if (!string.IsNullOrEmpty(parameters.SortBy))
-            {
-                query = query.OrderBy($"{parameters.SortBy} {parameters.SortDirection}");
-
-            };
-            if (parameters.onlyEditedAfterRejection == true)
-            {
-                query = query.Where(r => r.IsEditedAfterRejection == true);
-            }
-
-
-            //  Pagination
-            var source = query
-                    //.Include(r => r.Member)
-                    //.Include(r => r.service)
-                    .ProjectToType<RequestsDetails>()
-                    .AsNoTracking();
-
-            var response = await PaginationList<RequestsDetails>.CreateAsync(source, parameters.PageNumber, parameters.PageSize, cancellationToken);
-
-
-            return Result.Success(response);
-        }
     }
 }
 

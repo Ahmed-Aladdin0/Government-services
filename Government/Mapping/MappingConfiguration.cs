@@ -1,7 +1,6 @@
-﻿
+﻿using Government.Contracts.FilesAndFileds;
 using Government.Contracts.Request;
 using Government.Contracts.Services;
-using Government.Test.Dtos;
 using Mapster;
 using SurvayBasket.Contracts.Authentication;
 using SurvayBasket.Contracts.User.cs;
@@ -15,6 +14,10 @@ namespace Government.Mapping
       
 
             config.NewConfig<Service, ServiceResponse>()
+             .Map(dest => dest.category, src => src.category);
+
+
+            config.NewConfig<Service, ServiceDetails>()
              .Map(dest => dest.category, src => src.category);
 
             config.NewConfig<Service, ServiceDetails>()
