@@ -133,6 +133,8 @@ namespace Government.ApplicationServices.GovernmentServices
                 await _fileServcie.UploadManyAsync(request.Files, newService.Id);
                 await _context.SaveChangesAsync(cancellationToken);
 
+                // add image 
+
                 await transaction.CommitAsync(cancellationToken);
 
                 var serviceResponse = newService.Adapt<ServiceResponse>();

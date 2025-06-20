@@ -2,7 +2,13 @@
 {
     public record MostRequested
      (
-         string ServiceName
+         int Id,
+        string ServiceName,
+        string ServiceDescription,
+        string category,
+        decimal Fee,
+        string ProcessingTime,
+        List<string> RequiredFiles
 
      );
 

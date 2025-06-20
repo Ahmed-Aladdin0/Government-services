@@ -17,6 +17,7 @@ namespace Government.Controllers
 
 
         [HttpGet("Available")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetAvailableServices([FromQuery] ServiceSearch serviceSearch, CancellationToken cancellationToken)
         {
 

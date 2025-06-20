@@ -17,8 +17,8 @@ namespace Government.Mapping
              .Map(dest => dest.category, src => src.category);
 
 
-            config.NewConfig<Service, ServiceDetails>()
-             .Map(dest => dest.category, src => src.category);
+            //config.NewConfig<Service, ServiceDetails>()
+            // .Map(dest => dest.category, src => src.category);
 
             config.NewConfig<Service, ServiceDetails>()
              .Map(dest => dest.RequiredFiles,

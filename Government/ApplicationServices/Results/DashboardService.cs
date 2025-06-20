@@ -143,31 +143,36 @@ namespace Government.ApplicationServices.Results
         {
 
             var mostRequestedServices = await _context.Requests
-                                             .GroupBy(r => r.ServiceId)
-                                             .Select(x => new
-                                             {
-                                                 ServiceId = x.Key,
-                                                 RequestCount = x.Count()
-                                             })
-                                             .OrderByDescending(u => u.RequestCount)
-                                             .Take(5)
-                                             .ToListAsync();
+                                  .GroupBy(r => r.ServiceId)
+                                  .Select(x => new
+                                  {
+                                      ServiceId = x.Key,
+                                      RequestCount = x.Count()
+                                  })
+                                  .OrderByDescending(u => u.RequestCount)
+                                  .Take(5)
+                                  .ToListAsync();
 
 
             var serviceIds = mostRequestedServices.Select(x => x.ServiceId).ToList();
 
 
-            //var services = await _context.Services
-            //                   .Where(s => serviceIds.Contains(s.Id))
-            //                   .Select(s => s.ServiceName)
-            //                   .ToListAsync();
-
             var services = await _context.Services
-                      .Where(s => serviceIds.Contains(s.Id))
-                      .Select(s => new MostRequested(s.ServiceName)) // تحويل مباشرة إلى MostRequested
-                      .ToListAsync();
+            .Where(s => serviceIds.Contains(s.Id))
+            .Include(s => s.RequiredDocuments)
+            .Select(s => new MostRequested
+            (
+                s.Id,
+                s.ServiceName,
+                s.ServiceDescription,
+                s.category,
+                s.Fee,
+                s.ProcessingTime,
+                s.RequiredDocuments.Select(d => d.FileName).ToList()
+            ))
+            .ToListAsync();
 
-            // var service = new MostRequested(services);
+
 
 
 
