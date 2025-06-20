@@ -30,12 +30,22 @@ namespace Government.Controllers
         }
 
 
+        [HttpGet("requests_Per_Month")]
+        public async Task<IActionResult> GetRequestStatisticsPerMonth()
+        {
+            var result = await dashboardService.GetRequestStatisticsPerMonthAsync();
+
+            return Ok(result.Value());
+        }
+
+
         [HttpGet("services")]
         public async Task<IActionResult> GetServiceStatistics()
         {
             var result = await dashboardService.GetServiceStatisticsAsync();
-            return Ok(result);
+            return Ok(result.Value());
         }
+
 
         [HttpGet("MostRequestedServices")]
         [AllowAnonymous]
