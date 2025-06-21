@@ -15,6 +15,7 @@ namespace Government.Data
         }
 
         public DbSet<Service> Services { get; set; }
+        public DbSet<ServiceImage> ServiceImages { get; set; }
         public DbSet<ServiceData> ServicesData { get; set; }
         public DbSet<Field> Fields { get; set; }
         public DbSet<ServiceField> ServicesField { get; set; }

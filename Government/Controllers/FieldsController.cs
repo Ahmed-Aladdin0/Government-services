@@ -6,6 +6,7 @@ namespace Government.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class FieldsController(IFieldServcie fieldServcie) : ControllerBase
     {
         private readonly IFieldServcie fieldServcie = fieldServcie;
@@ -32,7 +33,7 @@ namespace Government.Controllers
 
 
         [HttpGet("Required/Service/{serviceId}")]
-        [AllowAnonymous]
+        //[AllowAnonymous]
         public async Task<IActionResult> GetServiceFields([FromRoute] int serviceId, CancellationToken cancellationToken)
         {
 

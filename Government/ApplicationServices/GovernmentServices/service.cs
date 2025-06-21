@@ -1,4 +1,5 @@
 ﻿using Government.ApplicationServices.UploadFiles;
+using Government.ApplicationServices.UploadServiceImage;
 using Government.Contracts.Services;
 using Government.Errors;
 using Mapster;
@@ -7,10 +8,11 @@ using Mapster;
 namespace Government.ApplicationServices.GovernmentServices
 {
 
-    public class service(AppDbContext context, IRequiredFileServcie fileServcie, ILogger<service> logger) : IService
+    public class service(AppDbContext context, IRequiredFileServcie fileServcie, ILogger<service> logger, Iserviceimage iserviceimage) : IService
     {
         private readonly AppDbContext _context = context;
         private readonly IRequiredFileServcie _fileServcie = fileServcie;
+        private readonly Iserviceimage _iserviceimage = iserviceimage;
 
         public async Task<Result<IEnumerable<ServiceResponse>>> GetAllAvailableServicesAsync(ServiceSearch serviceSearch, CancellationToken cancellationToken = default)
         {
@@ -81,6 +83,7 @@ namespace Government.ApplicationServices.GovernmentServices
             using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
             try
             {
+                // add service details
                 var newService = new Service
                 {
                     ServiceName = request.ServiceName,
@@ -93,6 +96,7 @@ namespace Government.ApplicationServices.GovernmentServices
                 await _context.Services.AddAsync(newService, cancellationToken);
                 await _context.SaveChangesAsync(cancellationToken);
 
+                // add fields
                 var serviceFields = new List<ServiceField>();
 
                 foreach (var fieldRequest in request.ServiceFields)
@@ -130,10 +134,16 @@ namespace Government.ApplicationServices.GovernmentServices
                 await _context.ServicesField.AddRangeAsync(serviceFields, cancellationToken);
                 await _context.SaveChangesAsync(cancellationToken);
 
+                //add files
+
                 await _fileServcie.UploadManyAsync(request.Files, newService.Id);
                 await _context.SaveChangesAsync(cancellationToken);
 
-                // add image 
+
+
+                // add service image 
+                await _iserviceimage.UploadAsync(request.ServiceImage, newService.Id);
+                await _context.SaveChangesAsync(cancellationToken);
 
                 await transaction.CommitAsync(cancellationToken);
 

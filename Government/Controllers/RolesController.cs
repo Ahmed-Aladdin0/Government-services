@@ -1,4 +1,5 @@
 ﻿using Government.ApplicationServices.services;
+using Microsoft.AspNetCore.Authorization;
 using SurvayBasket.Contracts.Role.cs;
 using SurvayBasket.Errors;
 
@@ -6,6 +7,7 @@ namespace SurvayBasket.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class RolesController(IRoleService roleService) : ControllerBase
     {
         private readonly IRoleService roleService = roleService;
@@ -18,7 +20,6 @@ namespace SurvayBasket.Controllers
 
         }
 
-
         [HttpGet("active")]
         public async Task<ActionResult> GetAllActive()
         {
@@ -26,8 +27,6 @@ namespace SurvayBasket.Controllers
             return Ok(result.Value());
 
         }
-
-
 
         [HttpGet("{id}")]
         public async Task<ActionResult> Get([FromRoute] string id , CancellationToken cancellationToken)

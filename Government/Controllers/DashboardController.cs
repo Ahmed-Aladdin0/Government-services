@@ -8,6 +8,7 @@ namespace Government.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class DashboardController(IDashboardService dashboardService) : ControllerBase
     {
         private readonly IDashboardService dashboardService = dashboardService;
@@ -48,7 +49,7 @@ namespace Government.Controllers
 
 
         [HttpGet("MostRequestedServices")]
-        [AllowAnonymous]
+        //[AllowAnonymous]
         public async Task<IActionResult> GetMostRequestedServices()
         {
             var result = await dashboardService.GetMostRequestedServicesAsync();

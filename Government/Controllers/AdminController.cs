@@ -8,6 +8,7 @@ namespace Government.Controllers
 {
     [Route("[controller]")]
     [ApiController]
+    [Authorize]
     public class AdminController : ControllerBase
     {
         private readonly IAdminResponseToRequest _adminResponseToRequest;
@@ -19,7 +20,7 @@ namespace Government.Controllers
 
         [HttpPost]
         [Route("Response-To-Request")]
-        [Authorize]
+  
         public async Task<IActionResult> CreateResponseByAdmin (AdminReply adminReply , CancellationToken cancellationToken)
         {
             var adminResponse = await _adminResponseToRequest.AddAdminResponseAsync(adminReply, cancellationToken);

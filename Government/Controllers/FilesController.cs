@@ -1,4 +1,5 @@
 ﻿using Government.ApplicationServices.Files;
+using Government.Contracts;
 using Government.Contracts.FilesAndFileds;
 using Microsoft.AspNetCore.Authorization;
 
@@ -6,6 +7,8 @@ namespace Government.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
+
     public class FilesController( IFileService fileService) : ControllerBase
     {
      
@@ -33,7 +36,7 @@ namespace Government.Controllers
 
 
         [HttpGet("Required/Service/{serviceId}")]
-        [AllowAnonymous]
+       // [AllowAnonymous]
         public async Task<IActionResult> GetServiceFiles([FromRoute] int serviceId, CancellationToken cancellationToken)
         {
 
@@ -79,5 +82,41 @@ namespace Government.Controllers
 
 
         }
+
+        [HttpGet("Image/Service/{serviceId}")]
+       // [AllowAnonymous]
+        public async Task<IActionResult> GetServiceImage([FromRoute] int serviceId, CancellationToken cancellationToken)
+        {
+
+            var result = await fileService.GetServiceImageAsync(serviceId, cancellationToken);
+
+            return result.IsSuccess ?
+                        Ok(result.Value())
+                      : result.ToProblem(statuscode: StatusCodes.Status404NotFound);
+        }
+
+        [HttpGet(" Image/Download/{id}")]
+        public async Task<IActionResult> DownloadServiceImage([FromRoute] int id, CancellationToken cancellationToken)
+        {
+            var result = await fileService.DownloadServiceImageAsync(id, cancellationToken);
+
+            return !result.IsSuccess ?
+                    result.ToProblem(statuscode: StatusCodes.Status404NotFound) :
+                    File(result.Value()!.fileContent, result.Value()!.contentType, result.Value()!.fileName);
+
+
+        }
+
+
+
+        [HttpPut("Image/Servcie/{serviceId}")]
+        public async Task<IActionResult> UpdateServiceImage([FromRoute] int serviceId, [FromForm] NewImage image, CancellationToken cancellationToken)
+        {
+            var result = await fileService.UpdateImageAsync(serviceId, image, cancellationToken);
+
+            return result.IsSuccess ? NoContent() : result.ToProblem(statuscode: StatusCodes.Status404NotFound);
+
+        }
+
     }
 }

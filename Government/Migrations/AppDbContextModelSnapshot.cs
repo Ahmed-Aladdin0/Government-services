@@ -189,7 +189,7 @@ namespace Government.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@GOVERNMENTSERVICES.COM",
                             NormalizedUserName = "ADMIN@GOVERNMENTSERVICES.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEFk4rzQzImUy/ybn31pr22R6L1EukxEHj+gAQSrIBkMpCLP/EbrEn8vUfrFq5ZIZYg==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEJKQQC6DdUfvfOYQhDr5gHRTK/e3cGwJBoLdsrc7qWgN5ikSFTpLTSmLaWuLKZnOIA==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "01954439-8011-7cca-9a77-c5c75ebac097",
                             TwoFactorEnabled = false,
@@ -493,6 +493,42 @@ namespace Government.Migrations
                     b.HasIndex("ServiceId");
 
                     b.ToTable("ServiceFields", (string)null);
+                });
+
+            modelBuilder.Entity("Government.Entities.ServiceImage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ContentType")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("ImageExtension")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<string>("ImageName")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<int>("ServiceId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UploadedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ServiceId");
+
+                    b.ToTable("ServiceImages", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -831,6 +867,17 @@ namespace Government.Migrations
                     b.Navigation("service");
                 });
 
+            modelBuilder.Entity("Government.Entities.ServiceImage", b =>
+                {
+                    b.HasOne("Government.Entities.Service", "Service")
+                        .WithMany("ServiceImages")
+                        .HasForeignKey("ServiceId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Service");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Government.Entities.AppRole", null)
@@ -917,6 +964,8 @@ namespace Government.Migrations
                     b.Navigation("RequiredDocuments");
 
                     b.Navigation("ServiceFields");
+
+                    b.Navigation("ServiceImages");
                 });
 #pragma warning restore 612, 618
         }

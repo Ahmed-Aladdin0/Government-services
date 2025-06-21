@@ -15,7 +15,9 @@
         public ICollection<RequiredDocument> RequiredDocuments { get; set; } = [];
         public ICollection<Field> Field { get; set; } = [];
         public ICollection<ServiceField> ServiceFields { get; set; } = [];
+        public ICollection<ServiceImage> ServiceImages { get; set; } = [];
 
-     
+
+
     }
 }

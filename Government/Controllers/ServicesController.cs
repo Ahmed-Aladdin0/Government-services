@@ -17,7 +17,6 @@ namespace Government.Controllers
 
 
         [HttpGet("Available")]
-        [AllowAnonymous]
         public async Task<IActionResult> GetAvailableServices([FromQuery] ServiceSearch serviceSearch, CancellationToken cancellationToken)
         {
 
@@ -60,7 +59,6 @@ namespace Government.Controllers
         }
 
         [HttpPut("{id}")]
-        [AllowAnonymous]
         public async Task<IActionResult> UpdateServiceDetails([FromRoute] int id, [FromBody] ServcieDescription request, CancellationToken cancellationToken)
         {
 

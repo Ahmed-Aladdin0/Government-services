@@ -1,4 +1,5 @@
 ﻿using Government.ApplicationServices.services;
+using Microsoft.AspNetCore.Authorization;
 using SurvayBasket.Contracts.User.cs;
 using SurvayBasket.UsreErrors;
 
@@ -6,6 +7,7 @@ namespace SurvayBasket.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class UsersController(IUserService userService) : ControllerBase
     {
         private readonly IUserService userService = userService;

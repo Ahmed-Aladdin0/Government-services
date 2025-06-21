@@ -51,7 +51,6 @@ namespace SurvayBasket.Controllers
 
 
         [HttpPost("Forget-Password")]
-        [AllowAnonymous]
         public async Task<ActionResult> ForgetUserPassword(ForgetPasswordRequest request)
         {
 
@@ -64,7 +63,6 @@ namespace SurvayBasket.Controllers
 
 
         [HttpPost("Reset-Password")]
-        [AllowAnonymous]
         public async Task<IActionResult> ResetUserPassword(ResetPasswordRequest Request)
         {
 

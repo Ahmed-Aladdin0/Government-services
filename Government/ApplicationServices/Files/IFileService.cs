@@ -1,4 +1,5 @@
-﻿using Government.Contracts.FilesAndFileds;
+﻿using Government.Contracts;
+using Government.Contracts.FilesAndFileds;
 
 namespace Government.ApplicationServices.Files
 {
@@ -10,6 +11,10 @@ namespace Government.ApplicationServices.Files
         Task<Result> UpdateFilesAsync(int serviceId, FilesTest filesTest, CancellationToken cancellationToken = default!);
         Task<Result<DownLoadResponse>> DownloadServiceFileAsync(int FileId, CancellationToken cancellationToken = default!);
         Task<Result<DownLoadResponse>> DownloadAttachedFileAsync(int FileId, CancellationToken cancellationToken = default!);
+        Task<Result<Imagedetails>> GetServiceImageAsync(int serviceId, CancellationToken cancellationToken);
+        Task<Result<DownLoadResponse>> DownloadServiceImageAsync(int FileId, CancellationToken cancellationToken = default);
+        Task<Result> UpdateImageAsync(int serviceId, NewImage image, CancellationToken cancellationToken = default);
+
 
     }
 }

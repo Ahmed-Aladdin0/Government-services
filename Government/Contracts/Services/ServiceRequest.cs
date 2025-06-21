@@ -9,7 +9,8 @@
         string category,
         string ContactInfo,
         List<IFormFile> Files,
-        List<ServiceFields> ServiceFields
+        List<ServiceFields> ServiceFields,
+        IFormFile ServiceImage
 
     );
 }

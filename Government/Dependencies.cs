@@ -8,6 +8,7 @@ using Government.ApplicationServices.RequestServices;
 using Government.ApplicationServices.Results;
 using Government.ApplicationServices.services;
 using Government.ApplicationServices.UploadFiles;
+using Government.ApplicationServices.UploadServiceImage;
 using Government.Authentication;
 using Government.Errors;
 using Mapster;
@@ -59,6 +60,7 @@ namespace Government
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IRequiredFileServcie, RequiredFileServcie>();
             services.AddScoped<IAttachedFileServcie, AttachedFileServcie>();
+            services.AddScoped<Iserviceimage, serviceimage>();
            
 
 
