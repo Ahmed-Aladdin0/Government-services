@@ -20,8 +20,8 @@ name: Build and Deploy to Azure Container Apps
  password: ${{ secrets.DOCKERHUB_TOKEN }}
     # Build and push Docker image- name: Build and push Docker image
  run: |
-        docker build -t $ env.DOCKER_IMAGE  .
-        docker push $ env.DOCKER_IMAGE 
+        docker build -t ${{ env.DOCKER_IMAGE }}
+        docker push ${{ env.DOCKER_IMAGE }}
     # Login to Azure- name: Azure Login
  uses: azure/login@v2
  with:
