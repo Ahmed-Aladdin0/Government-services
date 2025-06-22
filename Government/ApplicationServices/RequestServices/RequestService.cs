@@ -8,17 +8,18 @@ using SurvayBasket.Abstractions;
 using System.Linq;
 using System.Security.Claims;
 using System.Linq.Dynamic.Core;
+using Government.ApplicationServices.PaymentService;
 namespace Government.ApplicationServices.RequestServices
 {
     public class RequestService(AppDbContext context, IHttpContextAccessor httpContextAccessor,
-         ILogger<RequestService> logger, IAttachedFileServcie attachedFileServcie
+         ILogger<RequestService> logger, IAttachedFileServcie attachedFileServcie,IPaymentService paymentService
        ) : IRequestService
     {
         private readonly AppDbContext _context = context;
         private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
         private readonly ILogger<RequestService> logger = logger;
         private readonly IAttachedFileServcie attachedFileServcie = attachedFileServcie;
-
+        private readonly IPaymentService _paymentService = paymentService;
 
         public async Task<Result<PaginationList<RequestsDetails>>> GetAllRequests(RequestQueryParameters parameters, CancellationToken cancellationToken)
         {
@@ -154,7 +155,7 @@ namespace Government.ApplicationServices.RequestServices
             return Result.Success<IEnumerable<RequestsDetailstoUser>>(requests);
 
         }
-
+        /*
         public async Task<Result<SubmitResponseDto>> SubmitRequestAsync(SubmitRequestDto requestDto, CancellationToken cancellationToken)
         {
             var userId = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
@@ -201,33 +202,96 @@ namespace Government.ApplicationServices.RequestServices
             }
         }
        
+        */
 
-      ////  public async Task<Result> UpdateRequestAsync(int requestId, IEnumerable<UpdateRequest> requestDto, CancellationToken cancellationToken)
-      //  {
-       
-      //      var request = await _context.Requests.FindAsync(requestId);
-      //      if (request == null)
-      //          return Result.Falire<UpdateResponse>(RequestErrors.RequestNotFound);
 
-      //      foreach (var fieldDto in requestDto)
-      //      {
-      //          var fieldData = await _context.ServicesData.FindAsync(fieldDto.FieldDataId);
-      //          if (fieldData == null)
-      //              return Result.Falire<UpdateResponse>(RequestErrors.FieldDataNotFound);
+        public async Task<Result<SubmitResponseDto>> SubmitRequestAsync(SubmitRequestDto requestDto, CancellationToken cancellationToken)
+        {
+            var service = await _context.Services.FindAsync(requestDto.ServiceId);
 
-      //          var field = await _context.Fields.FindAsync(fieldDto.FieldId);
-      //          if (field == null)
-      //              return Result.Falire<UpdateResponse>(RequestErrors.FieldNotFound);
+            if (service == null)
+                return Result.Falire<SubmitResponseDto>(ServiceError.ServiceNotFound); 
 
-      //          fieldDto.Adapt(fieldData);
-      //      }
+            var userId = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
 
-      //      await _context.SaveChangesAsync(cancellationToken);
+            using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
+            try
+            {
+                // 1. إنشاء الطلب
+                var request = new Request
+                {
+                    RequestDate = DateTime.UtcNow,
+                    MemberId = userId!,
+                    ServiceId = requestDto.ServiceId
+                };
 
-      //      return Result.Success();
-      //  }
+                await _context.Requests.AddAsync(request, cancellationToken);
+                await _context.SaveChangesAsync(cancellationToken);
+
+                // 2. حفظ بيانات الحقول
+                var serviceDataList = requestDto.ServiceData.Select(sd => new ServiceData
+                {
+                    RequestId = request.Id,
+                    FieldId = sd.FieldId,
+                    FieldValueString = sd.FieldValueString,
+                    FieldValueInt = sd.FieldValueInt,
+                    FieldValueFloat = sd.FieldValueFloat,
+                    FieldValueDate = sd.FieldValueDate
+                }).ToList();
+
+                await _context.ServicesData.AddRangeAsync(serviceDataList, cancellationToken);
+                await _context.SaveChangesAsync(cancellationToken);
+
+                // 3. تنفيذ الدفع
+                //var paymentResult = await _paymentService.MakeTransaction(request.Id, requestDto.PaymentMethodId, cancellationToken);
+                var paymentResult = await _paymentService.MakeTransaction(request.Id, service.Fee, cancellationToken);
+                if (!paymentResult.IsSuccess)
+                {
+                    await transaction.RollbackAsync(cancellationToken);
+                    return Result.Falire<SubmitResponseDto>(paymentResult.Error); 
+                }
+
+                // 4. رفع الملفات
+                await attachedFileServcie.UploadManyAttachedAsync(requestDto.Files, request.Id, cancellationToken);
+
+                // 5. تأكيد المعاملة
+                await transaction.CommitAsync(cancellationToken);
+                return Result.Success(new SubmitResponseDto(request.Id));
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync(cancellationToken);
+                logger.LogError(ex, "Error submitting request with payment");
+                return Result.Falire<SubmitResponseDto>(RequestErrors.RequestNotCompleted);
+            }
+        }
+
 
     }
 }
 
 
+////  public async Task<Result> UpdateRequestAsync(int requestId, IEnumerable<UpdateRequest> requestDto, CancellationToken cancellationToken)
+//  {
+
+//      var request = await _context.Requests.FindAsync(requestId);
+//      if (request == null)
+//          return Result.Falire<UpdateResponse>(RequestErrors.RequestNotFound);
+
+//      foreach (var fieldDto in requestDto)
+//      {
+//          var fieldData = await _context.ServicesData.FindAsync(fieldDto.FieldDataId);
+//          if (fieldData == null)
+//              return Result.Falire<UpdateResponse>(RequestErrors.FieldDataNotFound);
+
+//          var field = await _context.Fields.FindAsync(fieldDto.FieldId);
+//          if (field == null)
+//              return Result.Falire<UpdateResponse>(RequestErrors.FieldNotFound);
+
+//          fieldDto.Adapt(fieldData);
+//      }
+
+//      await _context.SaveChangesAsync(cancellationToken);
+
+//      return Result.Success();
+//  }

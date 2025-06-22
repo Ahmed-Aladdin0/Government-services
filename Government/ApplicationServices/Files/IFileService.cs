@@ -8,9 +8,13 @@ namespace Government.ApplicationServices.Files
         Task<Result<IEnumerable<FileDetails>>> GetAttachedFilesAsync(int RequestId, CancellationToken cancellationToken = default!);
         Task<Result> UpdateUserFilesAsync(int RequestId, UserFiles userFiles, CancellationToken cancellationToken = default!);
         Task<Result<IEnumerable<DocumentsResponse>>> GetServiceFilesAsync(int serviceId, CancellationToken cancellationToken);
+
+        /*************/
         Task<Result> UpdateFilesAsync(int serviceId, FilesTest filesTest, CancellationToken cancellationToken = default!);
         Task<Result<DownLoadResponse>> DownloadServiceFileAsync(int FileId, CancellationToken cancellationToken = default!);
         Task<Result<DownLoadResponse>> DownloadAttachedFileAsync(int FileId, CancellationToken cancellationToken = default!);
+
+        /***************/
         Task<Result<Imagedetails>> GetServiceImageAsync(int serviceId, CancellationToken cancellationToken);
         Task<Result<DownLoadResponse>> DownloadServiceImageAsync(int FileId, CancellationToken cancellationToken = default);
         Task<Result> UpdateImageAsync(int serviceId, NewImage image, CancellationToken cancellationToken = default);

@@ -4,6 +4,7 @@ using Government.ApplicationServices.AdminServices;
 using Government.ApplicationServices.Fields;
 using Government.ApplicationServices.Files;
 using Government.ApplicationServices.GovernmentServices;
+using Government.ApplicationServices.PaymentService;
 using Government.ApplicationServices.RequestServices;
 using Government.ApplicationServices.Results;
 using Government.ApplicationServices.services;
@@ -61,6 +62,7 @@ namespace Government
             services.AddScoped<IRequiredFileServcie, RequiredFileServcie>();
             services.AddScoped<IAttachedFileServcie, AttachedFileServcie>();
             services.AddScoped<Iserviceimage, serviceimage>();
+            services.AddScoped<IPaymentService, PaymentService>();
            
 
 

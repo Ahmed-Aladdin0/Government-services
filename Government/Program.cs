@@ -1,6 +1,7 @@
 ﻿
 using Government.Errors;
 using Serilog;
+using Stripe;
 using System.Net;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,6 +9,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 
 builder.Services.AddDependancy(builder.Configuration);
+
+//var stripeSettings = builder.Configuration.GetSection("Stripe");
+//StripeConfiguration.ApiKey = stripeSettings["SecretKey"];
+
 
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Override("Microsoft", Serilog.Events.LogEventLevel.Warning) 

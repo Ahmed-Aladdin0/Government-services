@@ -7,8 +7,6 @@ namespace Government.Contracts.Request.Submiting
         public SubmitRequestDtoValidator()
         {
 
-            RuleFor(x => x.ServiceId)
-                .GreaterThan(0);
 
             RuleFor(x => x.Files)
                 .NotNull()
