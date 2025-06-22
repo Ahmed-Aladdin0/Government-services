@@ -4,9 +4,9 @@ name: Build and Deploy to Azure Container Apps
  push:
  branches: ["main"]  # Trigger on push to main branch
  env:
- APP_NAME: "notification-service"     # Replace with your ACA name
- RESOURCE_GROUP: "notification-service"   # Replace with your RG name
- DOCKER_IMAGE: "docker.io/hossam12/notification-service:$ github.sha }}"
+ APP_NAME: "government-service"     # Replace with your ACA name
+ RESOURCE_GROUP: "docker-SC"   # Replace with your RG name
+ DOCKER_IMAGE: "docker.io/ahmedaladdin0/government-service:${{ github.sha }}"
  jobs:
   build-deploy:
     runs-on: ubuntu-latest
