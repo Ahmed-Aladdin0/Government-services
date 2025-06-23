@@ -6,8 +6,8 @@ on:
     branches: ["main"]
 
 env:
-  APP_NAME: "notification-service"
-  RESOURCE_GROUP: "notification-service"
+  APP_NAME: "government-service"
+  RESOURCE_GROUP: "docker-SC"
   DOCKER_IMAGE: "docker.io/ahmedaladdin0/government-service:${{ github.sha }}"
 
 jobs:
